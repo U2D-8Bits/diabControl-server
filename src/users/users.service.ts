@@ -28,7 +28,6 @@ export class UsersService {
   //! Metodo para crear un usuario
   async create(createUserDto: CreateUserDto) {
     
-      
       //* Validamos que el rol exista
       const roleFound = await this.roleRepository.findOne({where: {id_role: createUserDto.role_id}});
       
@@ -46,34 +45,27 @@ export class UsersService {
 
 
   //! Metodo para loguear un usuario
-  async loginUser(loginDto: LoginDto){
+  async loginUser(loginDto: LoginDto): Promise<any>{
+
+    
+    const userFound = await this.userRepository.findOne({
+      where: {user_username: loginDto.user_username}
+    });
+
+    if(!userFound){
+      return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    } 
+
+    if(userFound.user_password !== loginDto.user_password){
+      return new HttpException('Contraseña incorrecta', HttpStatus.BAD_REQUEST);
+    }
       
-      // Sin asignar JWT
-      const userFound = await this.userRepository.findOne({
-        where: {user_username: loginDto.user_username, user_password: loginDto.user_password},
-        relations: ['role']
-      });
+    const payload = { sub: userFound.id_user, username: userFound.user_username};
 
-      if(!userFound){
-        return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
-      }
-
-      // Validamos el login
-      if(userFound.user_username !== loginDto.user_username || userFound.user_password !== loginDto.user_password){
-        return new HttpException('Usuario o contraseña incorrectos', HttpStatus.UNAUTHORIZED);
-      }
-
-      // Asignamos JWT
-      const payload: JwtPayload = {id: userFound.id_user.toString()};
-
-      const token = this.getJWToken(payload);
-
-      const loginResponse: LoginResponse = {
-        user: userFound,
-        token: token
-      }
-
-      return loginResponse;
+    return {
+      userFound,
+      access_token: await this.jwtService.signAsync(payload)
+    }
   }
 
 
@@ -152,13 +144,4 @@ export class UsersService {
       return this.userRepository.remove(userFound);
   }
 
-
-
-
-
-  //! Metodo para generar un token
-  getJWToken(payload: JwtPayload){
-    const token = this.jwtService.sign(payload);
-    return token;
-  }
 }

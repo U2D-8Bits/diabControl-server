@@ -9,6 +9,7 @@ import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { RoleModule } from 'src/role/role.module';
+import { jwtConstants } from './constants';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { RoleModule } from 'src/role/role.module';
 
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SEED,
+      secret: jwtConstants.secret,
       signOptions: { expiresIn: '6h' },
     }),
 

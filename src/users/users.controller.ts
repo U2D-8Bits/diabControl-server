@@ -20,6 +20,9 @@ export class UsersController {
   }
 
 
+
+
+
   //! Ruta para loguear un usuario
   @Post('/login')
   loginUser(@Body() loginDto:LoginDto){
@@ -28,6 +31,8 @@ export class UsersController {
 
 
 
+
+  
   //! Ruta listar todos los usuarios
   @Get()
   findAll() {
