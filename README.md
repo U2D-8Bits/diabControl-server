@@ -5,8 +5,7 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
+
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
@@ -19,20 +18,20 @@
     <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
   <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## Descripcion
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Repositorio enfocado para el backend de la aplicacion DiabControl
 
-## Installation
+## Instalacion
 
-```bash
-$ npm install
+Ejecutar el siguiente comando para la instalacion de todos los paquetes / recursos que fueron utilizados
+
+```
+npm install
 ```
 
-## Running the app
+## Ejecucion de la App
 
 ```bash
 # development
@@ -45,29 +44,28 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Pruebas
 
 ```bash
-# unit tests
+# Pruebas unitarias
 $ npm run test
 
 # e2e tests
 $ npm run test:e2e
 
-# test coverage
+# Pruebas de coraje
 $ npm run test:cov
 ```
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Realizar una copia del archivo ```.env.template``` y renombralo a ```.env```
+
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Linkedin - [Pablo Bolanos](https://www.linkedin.com/in/israelbolanos)
+- Correo - [u2d.8bits@gmail.com](u2d.8bits@gmail.com)
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+Nest is [U2D8-Bits] (LICENSE).
