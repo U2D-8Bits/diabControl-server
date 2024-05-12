@@ -166,4 +166,5 @@ export class UsersService {
     const token = this.jwtService.sign(payload);
     return token;
   }
+
 }

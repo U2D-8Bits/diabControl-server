@@ -69,7 +69,7 @@ export class UsersController {
 
   //! Ruta para eliminar un usuario por id
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number ) {
+    return this.usersService.remove(id);
   }
 }
