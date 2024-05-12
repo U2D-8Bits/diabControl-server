@@ -49,27 +49,33 @@ export class UsersService {
 
   //! Metodo para loguear un usuario
   async loginUser(loginDto: LoginDto){
+      
+      // Sin asignar JWT
+      const userFound = await this.userRepository.findOne({
+        where: {user_username: loginDto.user_username, user_password: loginDto.user_password},
+        relations: ['role']
+      });
 
-    const {user_username, user_password} = loginDto;
+      if(!userFound){
+        return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
 
-    const userFound = await this.userRepository.findOne({where: {user_username}});
+      // Validamos el login
+      if(userFound.user_username !== loginDto.user_username || userFound.user_password !== loginDto.user_password){
+        return new HttpException('Usuario o contraseña incorrectos', HttpStatus.UNAUTHORIZED);
+      }
 
-    if(!userFound){
-      return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
-    }
+      // Asignamos JWT
+      const payload: JwtPayload = {id: userFound.id_user.toString()};
 
-    //* Verificamos que la contraseña sea correcta
-    if(userFound.user_password !== user_password){
-      return new HttpException('Contraseña incorrecta', HttpStatus.BAD_REQUEST);
-    }
+      const token = this.getJWToken(payload);
 
-    const payload = { sub: userFound.id_user, username: userFound.user_username};
+      const loginResponse: LoginResponse = {
+        user: userFound,
+        token: token
+      }
 
-
-    return {
-      access_token: await this.jwtService.signAsync(payload)
-    };
-
+      return loginResponse;
   }
 
 
