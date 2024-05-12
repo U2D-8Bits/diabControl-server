@@ -9,15 +9,17 @@ import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { RoleModule } from 'src/role/role.module';
-import { jwtConstants } from './constants';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role]),
+    ConfigModule.forRoot(),
 
+    TypeOrmModule.forFeature([User, Role]),
+    
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SEED,
       signOptions: { expiresIn: '6h' },
     }),
 
@@ -26,4 +28,8 @@ import { jwtConstants } from './constants';
   controllers: [UsersController],
   providers: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule {
+
+  constructor(){  }
+
+}

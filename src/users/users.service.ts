@@ -59,12 +59,10 @@ export class UsersService {
     if(userFound.user_password !== loginDto.user_password){
       return new HttpException('Contraseña incorrecta', HttpStatus.BAD_REQUEST);
     }
-      
-    const payload = { sub: userFound.id_user, username: userFound.user_username};
 
     return {
       userFound,
-      access_token: await this.jwtService.signAsync(payload)
+      token: this.getJwtToken({id: userFound.id_user.toString()})
     }
   }
 
@@ -95,6 +93,21 @@ export class UsersService {
     }
 
     return userFound;
+
+  }
+
+
+
+
+
+  //! Metodo para buscar un usuario por ID  para usar en el Guard (AuthGuard)
+  async findUserByID(id: number){
+
+    const user = await this.userRepository.findOne({
+      where:{id_user: id}
+    })
+
+    return user;
 
   }
 
@@ -144,4 +157,13 @@ export class UsersService {
       return this.userRepository.remove(userFound);
   }
 
+
+
+
+
+  //! get Jason Web Token
+  getJwtToken(payload: JwtPayload){
+    const token = this.jwtService.sign(payload);
+    return token;
+  }
 }

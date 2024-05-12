@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 
 
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, LoginDto } from './dto';
 import { AuthGuard } from './guards/auth/auth.guard';
@@ -37,7 +39,7 @@ export class UsersController {
   //! Ruta listar todos los usuarios
   @UseGuards( AuthGuard )
   @Get()
-  findAll() {
+  findAll( @Request() req: Request ) {
     return this.usersService.findAll();
   }
 
