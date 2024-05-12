@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 
 
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, LoginDto } from './dto';
+import { AuthGuard } from './guards/auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -32,8 +33,9 @@ export class UsersController {
 
 
 
-  
+
   //! Ruta listar todos los usuarios
+  @UseGuards( AuthGuard )
   @Get()
   findAll() {
     return this.usersService.findAll();
