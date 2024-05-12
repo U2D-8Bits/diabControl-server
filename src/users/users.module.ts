@@ -9,11 +9,14 @@ import { User } from './entities/user.entity';
 import { Role } from 'src/role/entities/role.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { RoleModule } from 'src/role/role.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role]),
+    ConfigModule.forRoot(),
 
+    TypeOrmModule.forFeature([User, Role]),
+    
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SEED,
@@ -25,4 +28,8 @@ import { RoleModule } from 'src/role/role.module';
   controllers: [UsersController],
   providers: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule {
+
+  constructor(){  }
+
+}

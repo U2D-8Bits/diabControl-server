@@ -74,6 +74,20 @@ export class RoleService {
 
 
 
+  // ! Metodo para buscar el rol de medico por ID
+  async findRoleByID(id: number){
+
+    const role = await this.roleRepository.findOne({
+      where: { id_role: id }
+    });
+
+    return role;
+
+  }
+
+
+
+
 
   //! Metodo para actualizar un role
   async update(id: number, updateRoleDto: UpdateRoleDto) {

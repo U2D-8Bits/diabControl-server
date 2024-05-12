@@ -28,7 +28,6 @@ export class UsersService {
   //! Metodo para crear un usuario
   async create(createUserDto: CreateUserDto) {
     
-      
       //* Validamos que el rol exista
       const roleFound = await this.roleRepository.findOne({where: {id_role: createUserDto.role_id}});
       
@@ -46,34 +45,25 @@ export class UsersService {
 
 
   //! Metodo para loguear un usuario
-  async loginUser(loginDto: LoginDto){
-      
-      // Sin asignar JWT
-      const userFound = await this.userRepository.findOne({
-        where: {user_username: loginDto.user_username, user_password: loginDto.user_password},
-        relations: ['role']
-      });
+  async loginUser(loginDto: LoginDto): Promise<any>{
 
-      if(!userFound){
-        return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
-      }
+    
+    const userFound = await this.userRepository.findOne({
+      where: {user_username: loginDto.user_username}
+    });
 
-      // Validamos el login
-      if(userFound.user_username !== loginDto.user_username || userFound.user_password !== loginDto.user_password){
-        return new HttpException('Usuario o contraseña incorrectos', HttpStatus.UNAUTHORIZED);
-      }
+    if(!userFound){
+      return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    } 
 
-      // Asignamos JWT
-      const payload: JwtPayload = {id: userFound.id_user.toString()};
+    if(userFound.user_password !== loginDto.user_password){
+      return new HttpException('Contraseña incorrecta', HttpStatus.BAD_REQUEST);
+    }
 
-      const token = this.getJWToken(payload);
-
-      const loginResponse: LoginResponse = {
-        user: userFound,
-        token: token
-      }
-
-      return loginResponse;
+    return {
+      userFound,
+      token: this.getJwtToken({id: userFound.id_user.toString()})
+    }
   }
 
 
@@ -103,6 +93,21 @@ export class UsersService {
     }
 
     return userFound;
+
+  }
+
+
+
+
+
+  //! Metodo para buscar un usuario por ID  para usar en el Guard (AuthGuard)
+  async findUserByID(id: number){
+
+    const user = await this.userRepository.findOne({
+      where:{id_user: id}
+    })
+
+    return user;
 
   }
 
@@ -156,9 +161,10 @@ export class UsersService {
 
 
 
-  //! Metodo para generar un token
-  getJWToken(payload: JwtPayload){
+  //! get Jason Web Token
+  getJwtToken(payload: JwtPayload){
     const token = this.jwtService.sign(payload);
     return token;
   }
+
 }
