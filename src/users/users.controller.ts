@@ -1,9 +1,12 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
 
 
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, LoginDto } from './dto';
+import { AuthGuard } from './guards/auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -20,6 +23,9 @@ export class UsersController {
   }
 
 
+
+
+
   //! Ruta para loguear un usuario
   @Post('/login')
   loginUser(@Body() loginDto:LoginDto){
@@ -28,9 +34,12 @@ export class UsersController {
 
 
 
+
+
   //! Ruta listar todos los usuarios
+  @UseGuards( AuthGuard )
   @Get()
-  findAll() {
+  findAll( @Request() req: Request ) {
     return this.usersService.findAll();
   }
 
@@ -60,7 +69,7 @@ export class UsersController {
 
   //! Ruta para eliminar un usuario por id
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number ) {
+    return this.usersService.remove(id);
   }
 }
