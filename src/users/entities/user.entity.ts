@@ -2,7 +2,7 @@
 
 
 import { Role } from "src/role/entities/role.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -31,8 +31,13 @@ export class User {
     @Column({type: 'int', unique: true, nullable: false})
     user_ced: number
 
-    @ManyToOne( () => Role, (role) => role.users, {nullable: false})
-    @JoinColumn({name: 'role_id'})
+    @Column({type: 'boolean', default: true, nullable: false})
+    user_status: boolean
+
+    @Column()
+    role_id: number
+
+    @ManyToOne( () => Role, (role) => role.users, {onDelete: 'CASCADE'})
     role: Role
 
 }

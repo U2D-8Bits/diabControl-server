@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { IsEmail, IsPhoneNumber, IsString, Min, MinLength } from "class-validator"
+import { IsBoolean, IsEmail, IsNumber, IsPhoneNumber, IsString, Min, MinLength } from "class-validator"
 
 
 export class CreateUserDto {
@@ -27,5 +27,9 @@ export class CreateUserDto {
     @Min(10)
     user_ced: number
 
-    role: number
+    @IsBoolean()
+    user_status: boolean
+
+    @IsNumber()
+    role_id: number
 }
