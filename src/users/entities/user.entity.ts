@@ -28,8 +28,8 @@ export class User {
     @Column({type: 'varchar', length: 255, unique: true, nullable: false})
     user_phone: string
 
-    @Column({type: 'int', unique: true, nullable: false})
-    user_ced: number
+    @Column({type: 'varchar', length:10, unique: true, nullable: false})
+    user_ced: string
 
     @Column({type: 'boolean', default: true, nullable: false})
     user_status: boolean
