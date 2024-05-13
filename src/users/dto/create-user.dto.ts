@@ -24,8 +24,8 @@ export class CreateUserDto {
     @IsPhoneNumber('EC')
     user_phone: string
 
-    @IsNumber()
-    user_ced: number
+    @IsString()
+    user_ced: string
 
     @IsBoolean()
     user_status: boolean
