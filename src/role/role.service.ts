@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 
-
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -12,9 +11,8 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class RoleService {
-
   constructor(
-    @InjectRepository( Role ) private roleRepository: Repository<Role>,
+    @InjectRepository(Role) private roleRepository: Repository<Role>,
   ) {}
 
 
@@ -23,18 +21,32 @@ export class RoleService {
 
   //! Metodo para crear un nuevo role
   async create(createRoleDto: CreateRoleDto) {
+    //? Buscamos si existe un role con el mismo nombre
+    const roleExist = await this.roleRepository.findOne({
+      where: { role_name: createRoleDto.role_name },
+    });
 
-    const newRole = this.roleRepository.create( createRoleDto );
-    
-    // Valiidamos que no envie valores vacios
-    if( !newRole.role_name ) {
-      return new HttpException('No puede enviar valores vacios', HttpStatus.BAD_REQUEST);
+    //? Si existe un role con el mismo nombre lanzamos un error
+    if (roleExist) {
+      throw new HttpException(
+        'El nombre del role ya existe',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
-    // Guardamos el nuevo role y retornamos mensaje de exito
-    await this.roleRepository.save( newRole );
-    return new HttpException('Role creado con exito', HttpStatus.CREATED);
+    //? Si el nombre del role es vacio lanzamos un error
+    if (createRoleDto.role_name.length === 0) {
+      throw new HttpException(
+        'El nombre del role no puede ser vacio',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
+    //? Creamos un nuevo role
+    const newRole = this.roleRepository.create(createRoleDto);
+
+    //? Guardamos el nuevo role
+    return await this.roleRepository.save(newRole);
   }
 
 
@@ -43,12 +55,12 @@ export class RoleService {
 
   //! Metodo para listar todos los roles
   async findAll() {
-
-    //* retornamos mensaje de que no existe ningun role
-    if( (await this.roleRepository.find()).length === 0 ) {
-      return new HttpException('No existe ningun role', HttpStatus.NOT_FOUND);
+    //? Buscamos si existen roles, si no existen lanzamos un error
+    if ((await this.roleRepository.find()).length === 0) {
+      throw new HttpException('No existe ningun role', HttpStatus.NOT_FOUND);
     }
 
+    //? Retornamos todos los roles
     return await this.roleRepository.find();
   }
 
@@ -58,31 +70,38 @@ export class RoleService {
 
   //! Metodo para buscar un role por id
   async findOne(id: number) {
-    
-    const roleFound = await this.roleRepository.findOne({
-      where: { id_role: id }
+    //? Buscamos el role por id
+    const role = await this.roleRepository.findOne({
+      where: { id_role: id },
     });
 
-    if( !roleFound ) {
-      return new HttpException('Role no encontrado', HttpStatus.NOT_FOUND);
+    //? Si no existe el role lanzamos un error
+    if (!role) {
+      throw new HttpException('Role no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    return roleFound;
-
+    //? Retornamos el role
+    return role;
   }
 
 
 
 
-  // ! Metodo para buscar el rol de medico por ID
-  async findRoleByID(id: number){
 
+  // ! Metodo para buscar el rol de medico por ID
+  async findRoleByID(id: number) {
+    //? Buscamos el role por id
     const role = await this.roleRepository.findOne({
-      where: { id_role: id }
+      where: { id_role: id },
     });
 
-    return role;
+    //? Si no existe el role lanzamos un error
+    if (!role) {
+      throw new HttpException('Role no encontrado', HttpStatus.NOT_FOUND);
+    }
 
+    //? Retornamos el role
+    return role;
   }
 
 
@@ -91,26 +110,46 @@ export class RoleService {
 
   //! Metodo para actualizar un role
   async update(id: number, updateRoleDto: UpdateRoleDto) {
-    
+    //? Buscamos el role por id
     const roleFound = await this.roleRepository.findOne({
-      where: { id_role: id }
+      where: { id_role: id },
     });
 
-    if( !roleFound ) {
-      return new HttpException('Role no encontrado', HttpStatus.NOT_FOUND);
+    //? Si no existe el role lanzamos un error
+    if (!roleFound) {
+      throw new HttpException('Role no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    // Validamos de que no pueda repetir el nombre de un role
-    const roleExist = await this.roleRepository.findOne({
-      where: { role_name: updateRoleDto.role_name }
-    });
+    //? Validamos que no exista otro role con el mismo nombre
+    if (updateRoleDto.role_name) {
+      const roleExist = await this.roleRepository.findOne({
+        where: { role_name: updateRoleDto.role_name },
+      });
 
-    if( roleExist ) {
-      return new HttpException('El nombre del role ya existe', HttpStatus.BAD_REQUEST);
+      //? Si existe un role con el mismo nombre lanzamos un error
+      if (roleExist) {
+        throw new HttpException(
+          'El nombre del role ya existe',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
     }
 
-    const udpateRole = Object.assign( roleFound, updateRoleDto );
-    return await this.roleRepository.save( udpateRole );
+    //? Validamos que no envie un nombre de tamaño 0
+    if (updateRoleDto.role_name.length === 0) {
+      throw new HttpException(
+        'El nombre del role no puede ser vacio',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    //? Actualizamos el role con object.assign
+    const updatedRole = await this.roleRepository.save(
+      Object.assign(roleFound, updateRoleDto),
+    );
+
+    //? Retornamos el role actualizado
+    return updatedRole;
   }
 
 
@@ -119,20 +158,24 @@ export class RoleService {
 
   //! Metodo para eliminar un role
   async remove(id: number) {
-    
+    //? Buscamos el role por id
     const rolefound = await this.roleRepository.findOne({
-      where: { id_role: id }
+      where: { id_role: id },
     });
 
-    if( !rolefound ) {
-      return new HttpException('Role no encontrado', HttpStatus.NOT_FOUND);
+    //? Si no existe el role lanzamos un error
+    if (!rolefound) {
+      throw new HttpException('Role no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    await this.roleRepository.remove( rolefound );
+    //? Eliminamos el role
+    await this.roleRepository.remove(rolefound);
+
+    //? Retornamos un mensaje de eliminado
+    throw new HttpException('Role eliminado', HttpStatus.OK);
   }
 
 
 
-
-
+  
 }
