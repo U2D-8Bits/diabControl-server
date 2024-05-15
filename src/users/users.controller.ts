@@ -61,14 +61,16 @@ export class UsersController {
   //! Ruta para chequear el token
   @UseGuards(AuthGuard)
   @Get('check-token')
-  checkToken(@Request() req: Request): LoginResponse {
+  checkToken(@Request() req: Request): any {
 
     const user = req['user'] as User;
 
+    console.log(user.id_user);
+
     return {
-      token: this.userService.getJwtToken({ id: user.id_user }),
-      user
-    };
+      user,
+      token: this.userService.getJwtToken({ id: user.id_user.toString() }),
+    }
   }
 
 

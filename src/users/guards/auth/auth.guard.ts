@@ -40,7 +40,7 @@ export class AuthGuard implements CanActivate {
       );
 
       //* Buscamos el usuario por id
-      const user = await this.userService.findUserByID(payload.id);
+      const user = await this.userService.findUserByID(parseInt(payload.id));
 
       if(!user){
         throw new UnauthorizedException('Usuario no encontrado');
@@ -64,7 +64,7 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('Rol no permitido');
       }
 
-      request['user'] = payload.id;
+      request['user'] = user;
 
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
