@@ -19,6 +19,7 @@ import { CreateUserDto, UpdateUserDto, LoginDto } from './dto';
 import { AuthGuard } from './guards/auth/auth.guard';
 import { User } from './entities/user.entity';
 import { LoginResponse } from './interfaces';
+import { TokenGuard } from './guards/auth/token.guard';
 
 @Controller('users')
 export class UsersController {
@@ -59,7 +60,7 @@ export class UsersController {
 
 
   //! Ruta para chequear el token
-  @UseGuards(AuthGuard)
+  @UseGuards(TokenGuard)
   @Get('check-token')
   checkToken(@Request() req: Request): any {
 
