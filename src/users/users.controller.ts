@@ -2,19 +2,30 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 
-
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, LoginDto } from './dto';
 import { AuthGuard } from './guards/auth/auth.guard';
+import { User } from './entities/user.entity';
+import { LoginResponse } from './interfaces';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
-
-
-
-
+  constructor(
+    private readonly usersService: UsersService,
+    private userService: UsersService,
+  ) {}
 
   //! Ruta para crear un usuario
   @Post()
@@ -28,7 +39,7 @@ export class UsersController {
 
   //! Ruta para loguear un usuario
   @Post('/login')
-  loginUser(@Body() loginDto:LoginDto){
+  loginUser(@Body() loginDto: LoginDto) {
     return this.usersService.loginUser(loginDto);
   }
 
@@ -37,10 +48,27 @@ export class UsersController {
 
 
   //! Ruta listar todos los usuarios
-  @UseGuards( AuthGuard )
+  @UseGuards(AuthGuard)
   @Get()
-  findAll( @Request() req: Request ) {
+  findAll(@Request() req: Request) {
     return this.usersService.findAll();
+  }
+
+
+
+
+
+  //! Ruta para chequear el token
+  @UseGuards(AuthGuard)
+  @Get('check-token')
+  checkToken(@Request() req: Request): LoginResponse {
+
+    const user = req['user'] as User;
+
+    return {
+      token: this.userService.getJwtToken({ id: user.id_user }),
+      user
+    };
   }
 
 
@@ -59,7 +87,10 @@ export class UsersController {
 
   //! Ruta para actualizar un usuario por id
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.usersService.update(id, updateUserDto);
   }
 
@@ -69,7 +100,7 @@ export class UsersController {
 
   //! Ruta para eliminar un usuario por id
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number ) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
   }
 }
