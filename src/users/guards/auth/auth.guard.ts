@@ -40,7 +40,7 @@ export class AuthGuard implements CanActivate {
       );
 
       //* Buscamos el usuario por id
-      const user = await this.userService.findUserByID(parseInt(payload.id));
+      const user = await this.userService.findUserByID(payload.id);
 
       if(!user){
         throw new UnauthorizedException('Usuario no encontrado');
