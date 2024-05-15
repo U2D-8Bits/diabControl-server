@@ -126,7 +126,7 @@ export class UsersService {
     //? Retornamos el usuario y el token
     return {
       user,
-      token: this.getJwtToken({ id: user.id_user }),
+      token: this.getJwtToken({ id: user.id_user.toString() }),
     };
   }
 
