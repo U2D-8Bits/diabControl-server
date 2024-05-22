@@ -29,6 +29,7 @@ export class UsersController {
   ) {}
 
   //! Ruta para crear un usuario
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
@@ -59,14 +60,22 @@ export class UsersController {
 
 
 
+  //! Ruta para listar los usuarios de rol paciente
+  @UseGuards(AuthGuard)
+  @Get('pacientes')
+  findAllPacientes() {
+    return this.userService.findAllPacientes();
+  }
+
+
+
+
   //! Ruta para chequear el token
   @UseGuards(TokenGuard)
   @Get('check-token')
   checkToken(@Request() req: Request): any {
 
     const user = req['user'] as User;
-
-    console.log(user.id_user);
 
     return {
       user,
@@ -89,6 +98,7 @@ export class UsersController {
 
 
   //! Ruta para actualizar un usuario por id
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -98,10 +108,17 @@ export class UsersController {
   }
 
 
+  //! Ruta para cambiar el status de un usuario por id
+  @UseGuards(AuthGuard)
+  @Patch(':id/status')
+  changeStatus(@Param('id', ParseIntPipe) id: number){
+    return this.usersService.changeStatus(id);
+  }
 
 
 
   //! Ruta para eliminar un usuario por id
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.remove(id);
