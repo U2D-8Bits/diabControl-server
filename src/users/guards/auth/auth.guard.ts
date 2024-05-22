@@ -58,9 +58,8 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('Rol no encontrado');
       }
 
-      //* Validamos que el rol sea medico
-      if(role.role_name !== 'medico'){
-        console.log(role.role_name);
+      //* Validamos que el rol sea medico o superadmin
+      if(role.role_name !== 'medico' && role.role_name !== 'superadmin'){
         throw new UnauthorizedException('Rol no permitido');
       }
 
