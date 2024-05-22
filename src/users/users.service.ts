@@ -27,7 +27,66 @@ export class UsersService {
   ) {}
 
 
+  //! Metodo para crear un usuario con rol SuperAdmin
+  async createSuperAdmin(createUserDto: CreateUserDto){
+    //? Buscamos el rol por nombre
+    const roleFound = await this.roleRepository.findOne({
+      where: { role_name: 'superadmin' },
+    })
 
+    //? Si no existe el rol lanzamos un error
+    if (!roleFound) {
+      throw new HttpException('Rol no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    //? validamos que el username, email, cedula y telefono no existan en otro usuario
+    const userFound = await this.userRepository.findOne({
+      where: [
+        { user_username: createUserDto.user_username },
+        { user_email: createUserDto.user_email },
+        { user_ced: createUserDto.user_ced },
+        { user_phone: createUserDto.user_phone },
+      ],
+    });
+
+    //? Si el username, email, cedula o telefono ya existen lanzamos un error
+    switch (true) {
+      case userFound?.user_username === createUserDto.user_username:
+        throw new HttpException(
+          'Nombre de usuario ya existe',
+          HttpStatus.BAD_REQUEST,
+        );
+      case userFound?.user_email === createUserDto.user_email:
+        throw new HttpException('Email ya existe', HttpStatus.BAD_REQUEST);
+      case userFound?.user_ced === createUserDto.user_ced:
+        throw new HttpException('Cedula ya existe', HttpStatus.BAD_REQUEST);
+      case userFound?.user_phone === createUserDto.user_phone:
+        throw new HttpException('Telefono ya existe', HttpStatus.BAD_REQUEST);
+    }
+
+    //? validamos que el username, email, cedula y telefono no sean de longitud 0
+    if (
+      createUserDto.user_username.length === 0 ||
+      createUserDto.user_email.length === 0 ||
+      createUserDto.user_ced.toString().length === 0 ||
+      createUserDto.user_phone.length === 0
+    ) {
+      throw new HttpException(
+        'Los campos no pueden ser vacios',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    //? Creamos un nuevo usuario
+    const newUser = this.userRepository.create(createUserDto);
+
+    //? Guardamos el usuario
+    const user = await this.userRepository.save(newUser);
+
+    //? Retornamos el usuario
+    return user;
+
+  }
 
 
   //! Metodo para crear un usuario
