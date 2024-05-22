@@ -26,7 +26,7 @@ export class TokenGuard implements CanActivate {
       throw new UnauthorizedException('Token no encontrado');
     }
     
-    try {
+
       
       const payload = await this.jwtService.verifyAsync<JwtPayload>(
         token, { secret: process.env.JWT_SEED}
@@ -44,10 +44,6 @@ export class TokenGuard implements CanActivate {
       }
 
       request['user'] = user;
-
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
-    }
 
     return true;
   }

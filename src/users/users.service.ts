@@ -149,6 +149,21 @@ export class UsersService {
 
 
 
+  //! Metodo para listar todos los usuarios de rol paciente
+  async findAllPacientes() {
+    //? Si no existe ningun usuario lanzamos un error
+    if ((await this.userRepository.find()).length === 0) {
+      throw new HttpException('No existe ningun usuario', HttpStatus.NOT_FOUND);
+    }
+
+    //? Retornamos todos los usuarios
+    return this.userRepository.find({where: {role_id: 2}});
+  } 
+
+
+
+
+
   //! Metodo para buscar un usuario por id
   async findOne(id: number) {
     //? Buscamos el usuario por id
@@ -265,6 +280,28 @@ export class UsersService {
 
 
 
+
+  //! Metodo para cambiar el status de un usuario por id
+  async changeStatus(id: number) {
+    //? Buscamos el usuario por id
+    const userFound = await this.userRepository.findOne({
+      where: { id_user: id },
+    });
+
+    //? Si no existe el usuario lanzamos un error
+    if (!userFound) {
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    //? Cambiamos el status del usuario
+    userFound.user_status = !userFound.user_status;
+
+    //? actualizamos el usuario
+    await this.userRepository.update(userFound.id_user, userFound);
+
+    //? Retornamos el usuario
+    return userFound;
+  }
 
 
   //! Metodo para eliminar un usuario por id
