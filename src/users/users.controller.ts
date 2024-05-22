@@ -28,6 +28,16 @@ export class UsersController {
     private userService: UsersService,
   ) {}
 
+  //! Ruta para crear un usuario superadmin
+  @Post('superadmin')
+  createSuperAdmin(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.createSuperAdmin(createUserDto);
+  }
+
+
+
+
+  
   //! Ruta para crear un usuario
   @UseGuards(AuthGuard)
   @Post()
