@@ -42,7 +42,7 @@ export class AppModule {
     console.log(`DB_NAME: ${process.env.POSTGRES_DB}`);
 
     // Imprimimos en consola la ruta que se debe usar en postman
-    console.log(`http://localhost:${process.env.PGPORT ?? 3000}/api/role`);
+    console.log(`http://localhost:${process.env.PORT ?? 3000}/api/role`);
   }
 
 }
