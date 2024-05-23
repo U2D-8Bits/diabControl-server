@@ -34,7 +34,7 @@ export class AppModule {
   
   // Imprimimos en consola toda la información de la base de datos
   constructor() {
-    console.log(`Server running on PORT: ${process.env.PGPORT ?? 3000}`);
+    console.log(`DB_PORT: ${process.env.PGPORT ?? 3000}`);
     console.log(`DB_HOST: ${process.env.PGHOST}`);
     console.log(`DB_PORT: ${process.env.PGPORT}`);
     console.log(`DB_USER: ${process.env.PGUSER}`);
