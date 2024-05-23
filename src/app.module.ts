@@ -13,11 +13,11 @@ import { ConfigModule } from '@nestjs/config';
     
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      host: process.env.PGHOST,
+      port: parseInt(process.env.PGPORT),
+      username: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.POSTGRES_DB,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
@@ -34,12 +34,15 @@ export class AppModule {
   
   // Imprimimos en consola toda la información de la base de datos
   constructor() {
-    console.log(`Server running on PORT: ${process.env.DB_PORT ?? 3000}`);
-    console.log(`DB_HOST: ${process.env.DB_HOST}`);
-    console.log(`DB_PORT: ${process.env.DB_PORT}`);
-    console.log(`DB_USER: ${process.env.DB_USER}`);
-    console.log(`DB_PASSWORD: ${process.env.DB_PASSWORD}`);
-    console.log(`DB_NAME: ${process.env.DB_NAME}`);
+    console.log(`Server running on PORT: ${process.env.PGPORT ?? 3000}`);
+    console.log(`DB_HOST: ${process.env.PGHOST}`);
+    console.log(`DB_PORT: ${process.env.PGPORT}`);
+    console.log(`DB_USER: ${process.env.PGUSER}`);
+    console.log(`DB_PASSWORD: ${process.env.PGPASSWORD}`);
+    console.log(`DB_NAME: ${process.env.POSTGRES_DB}`);
+
+    // Imprimimos en consola la ruta que se debe usar en postman
+    console.log(`http://localhost:${process.env.PGPORT ?? 3000}/api/role`);
   }
 
 }

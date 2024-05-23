@@ -17,10 +17,8 @@ async function bootstrap() {
     }),
   );
 
-  // Mostramos en consola la conección a la base de datos
-  console.log(`Server running on PORT: ${process.env.DB_PORT ?? 3000}`);
+  const PORT = process.env.PORT || 3000;
+  await app.listen(PORT);
 
-
-  await app.listen(process.env.DB_PORT ?? 3000);
 }
 bootstrap();
