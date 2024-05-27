@@ -23,7 +23,7 @@ import { ConfigModule } from '@nestjs/config';
       signOptions: { expiresIn: '6h' },
     }),
 
-    RoleModule
+    RoleModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

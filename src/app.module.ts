@@ -22,7 +22,9 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: true,
     }),
     RoleModule,
-    UsersModule],
+    UsersModule,
+    // Apartado de Chat con Websockets
+  ],
   controllers: [],
   providers: [],
 })
