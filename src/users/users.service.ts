@@ -27,6 +27,9 @@ export class UsersService {
   ) {}
 
 
+
+
+
   //! Metodo para crear un usuario con rol SuperAdmin
   async createSuperAdmin(createUserDto: CreateUserDto){
     //? Buscamos el rol por nombre
@@ -87,6 +90,9 @@ export class UsersService {
     return user;
 
   }
+
+
+
 
 
   //! Metodo para crear un usuario
@@ -218,6 +224,21 @@ export class UsersService {
     //? Retornamos todos los usuarios
     return this.userRepository.find({where: {role_id: 2}});
   } 
+
+
+
+
+
+  //! Metodo para listar todos los usuarios de rol medico
+  async findAllMedicos(){
+    //? Si no existe ningun usuario lanzamos un error
+    if ((await this.userRepository.find()).length === 0) {
+      throw new HttpException('No existe ningun usuario', HttpStatus.NOT_FOUND);
+    }
+
+    //? Retornamos todos los usuarios
+    return this.userRepository.find({where: {role_id: 1}});
+  }
 
 
 

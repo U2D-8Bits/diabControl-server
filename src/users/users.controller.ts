@@ -68,6 +68,15 @@ export class UsersController {
 
 
 
+  //! Ruta para listar todos los usuarios de rol medico
+  @UseGuards(TokenGuard)
+  @Get('medics')
+  findAllUsers(@Request() req: Request) {
+    return this.usersService.findAllMedicos();
+  }
+
+
+
 
 
   //! Ruta para listar los usuarios de rol paciente
