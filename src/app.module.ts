@@ -4,9 +4,8 @@
 import { Module } from '@nestjs/common';
 import { RoleModule } from './role/role.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { ChatModule } from './chat/chat.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,8 +23,6 @@ import { ChatModule } from './chat/chat.module';
     }),
     RoleModule,
     UsersModule,
-    ChatModule,
-    // Apartado de Chat con Websockets
   ],
   controllers: [],
   providers: [],
