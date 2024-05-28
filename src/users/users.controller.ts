@@ -127,6 +127,9 @@ export class UsersController {
   }
 
 
+
+
+
   //! Ruta para cambiar el status de un usuario por id
   @UseGuards(AuthGuard)
   @Patch(':id/status')
@@ -136,6 +139,8 @@ export class UsersController {
 
 
 
+
+  
   //! Ruta para eliminar un usuario por id
   @UseGuards(AuthGuard)
   @Delete(':id')

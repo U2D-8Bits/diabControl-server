@@ -406,7 +406,6 @@ export class UsersService {
 
 
 
-
   //! get Jason Web Token
   getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
