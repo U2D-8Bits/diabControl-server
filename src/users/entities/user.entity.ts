@@ -1,6 +1,10 @@
 /* eslint-disable prettier/prettier */
+import { Chat } from "src/chat/entities/chat.entity";
+import { Message } from "src/chat/entities/message.entity";
+import { Form } from "src/forms/entities/form.entity";
+import { Inform } from "src/informs/entities/inform.entity";
 import { Role } from "src/role/entities/role.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -37,5 +41,19 @@ export class User {
 
     @ManyToOne( () => Role, (role) => role.users, {onDelete: 'CASCADE'})
     role: Role
+
+    @OneToMany( () => Inform, inform => inform.user)
+    informs: Inform[]
+
+    @OneToMany( () => Form, form => form.user )
+    forms: Form[]
+
+    // Un usuario puede tener muchos chats
+    @OneToMany( () => Chat, (chat) => chat.users)
+    chats: Chat[]
+
+    // Un usuario puede tener muchos mensajes
+    @OneToMany( () => Message, (message) => message.user)
+    messages: Message[]
 
 }
