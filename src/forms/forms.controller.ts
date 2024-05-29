@@ -27,6 +27,11 @@ export class FormsController {
     return this.formsService.findAll();
   }
 
+
+
+
+
+  //! Metodo para buscar un formulario por su id
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.formsService.findOne(+id);
@@ -54,7 +59,7 @@ export class FormsController {
 
 
 
-  
+
   //! Metodo para eliminar un formulario por su id
   @Delete(':id')
   remove(@Param('id') id: string) {

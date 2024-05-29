@@ -74,8 +74,11 @@ export class FormsService {
       throw new HttpException('No se encontraron registros', HttpStatus.NOT_FOUND);
     }
 
-    //Si existe el formulario, lo retornamos
-    return formFounded;
+    //Si existe el formulario, con el usuario asociado
+    return this.formRepository.findOne({
+      where: { id_form: id },
+      relations: ['user']
+    })
   }
 
 
@@ -102,7 +105,8 @@ export class FormsService {
 
     //Si el usuario tiene formularios asociados, los retornamos
     return this.formRepository.find({
-      where: { user: userFounded }
+      where: { user: userFounded },
+      relations: ['user']
     });
   }
 
