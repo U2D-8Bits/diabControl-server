@@ -25,6 +25,15 @@ export class CreateUserDto {
     user_phone: string
 
     @IsString()
+    user_address: string
+
+    @IsString()
+    user_birthdate: string
+
+    @IsString()
+    user_genre: string
+
+    @IsString()
     user_ced: string
 
     @IsBoolean()

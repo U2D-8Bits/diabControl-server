@@ -27,67 +27,57 @@ export class UsersService {
   ) {}
 
 
-  //! Metodo para crear un usuario con rol SuperAdmin
-  async createSuperAdmin(createUserDto: CreateUserDto){
-    //? Buscamos el rol por nombre
-    const roleFound = await this.roleRepository.findOne({
-      where: { role_name: 'superadmin' },
-    })
+  //! Ruta para crear un usuario medico automaticamente
+  async createMedicUser() {
 
-    //? Si no existe el rol lanzamos un error
-    if (!roleFound) {
-      throw new HttpException('Rol no encontrado', HttpStatus.NOT_FOUND);
-    }
-
-    //? validamos que el username, email, cedula y telefono no existan en otro usuario
-    const userFound = await this.userRepository.findOne({
-      where: [
-        { user_username: createUserDto.user_username },
-        { user_email: createUserDto.user_email },
-        { user_ced: createUserDto.user_ced },
-        { user_phone: createUserDto.user_phone },
-      ],
+    //? Buscamos si existe un rol con el nombre de medico
+    const roleExist = await this.roleRepository.findOne({
+      where: { role_name: 'medico' },
     });
 
-    //? Si el username, email, cedula o telefono ya existen lanzamos un error
-    switch (true) {
-      case userFound?.user_username === createUserDto.user_username:
-        throw new HttpException(
-          'Nombre de usuario ya existe',
-          HttpStatus.BAD_REQUEST,
-        );
-      case userFound?.user_email === createUserDto.user_email:
-        throw new HttpException('Email ya existe', HttpStatus.BAD_REQUEST);
-      case userFound?.user_ced === createUserDto.user_ced:
-        throw new HttpException('Cedula ya existe', HttpStatus.BAD_REQUEST);
-      case userFound?.user_phone === createUserDto.user_phone:
-        throw new HttpException('Telefono ya existe', HttpStatus.BAD_REQUEST);
+    //? Si no existe el rol de medico lanzamos un error
+    if (!roleExist) {
+      throw new HttpException('Rol de medico no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    //? validamos que el username, email, cedula y telefono no sean de longitud 0
-    if (
-      createUserDto.user_username.length === 0 ||
-      createUserDto.user_email.length === 0 ||
-      createUserDto.user_ced.toString().length === 0 ||
-      createUserDto.user_phone.length === 0
-    ) {
+    //? Buscamos si existe un usuario con el nombre de medico
+    const userExist = await this.userRepository.findOne({
+      where: { user_username: 'medico' },
+    });
+
+    //? Si existe un usuario con el nombre de medico lanzamos un error
+    if (userExist) {
       throw new HttpException(
-        'Los campos no pueden ser vacios',
+        'El usuario de medico ya existe',
         HttpStatus.BAD_REQUEST,
       );
     }
 
     //? Creamos un nuevo usuario
-    const newUser = this.userRepository.create(createUserDto);
+    const newUser = this.userRepository.create({
+      user_name: 'Wilmer',
+      user_lastname: 'Barros',
+      user_username: 'medico',
+      user_password: 'medico123456',
+      user_email: 'wilmer@gmail.com',
+      user_phone: '0959587864',
+      user_address: 'Santo Domingo',
+      user_birthdate: '1999-10-10',
+      user_genre: 'Masculino',
+      user_ced: '1725412365',
+      user_status: true,
+      role_id: roleExist.id_role,
+    });
 
     //? Guardamos el usuario
-    const user = await this.userRepository.save(newUser);
+    const user = await this.userRepository.save({
+      ...newUser,
+      role: roleExist,
+    });
 
     //? Retornamos el usuario
     return user;
-
   }
-
 
   //! Metodo para crear un usuario
   async create(createUserDto: CreateUserDto) {
@@ -144,7 +134,10 @@ export class UsersService {
       const newUser = this.userRepository.create(createUserDto);
 
       //? Guardamos el usuario
-      const user = await this.userRepository.save(newUser);
+      const user = await this.userRepository.save({
+        ...newUser,
+        role: roleFound,
+      });
 
       //? Retornamos el usuario
       return user;
@@ -218,6 +211,21 @@ export class UsersService {
     //? Retornamos todos los usuarios
     return this.userRepository.find({where: {role_id: 2}});
   } 
+
+
+
+
+
+  //! Metodo para listar todos los usuarios de rol medico
+  async findAllMedicos(){
+    //? Si no existe ningun usuario lanzamos un error
+    if ((await this.userRepository.find()).length === 0) {
+      throw new HttpException('No existe ningun usuario', HttpStatus.NOT_FOUND);
+    }
+
+    //? Retornamos todos los usuarios
+    return this.userRepository.find({where: {role_id: 1}});
+  }
 
 
 
@@ -381,7 +389,6 @@ export class UsersService {
     //? Retornamos un mensaje
     throw new HttpException('Usuario eliminado', HttpStatus.OK);
   }
-
 
 
 

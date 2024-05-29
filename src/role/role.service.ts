@@ -16,6 +16,30 @@ export class RoleService {
   ) {}
 
 
+  //! Metodo para crear un role de medico automaticamente
+  async createMedicRole() {
+    //? Buscamos si existe un role con el nombre de medico
+    const roleExist = await this.roleRepository.findOne({
+      where: { role_name: 'medico' },
+    });
+
+    //? Si existe un role con el nombre de medico lanzamos un error
+    if (roleExist) {
+      throw new HttpException(
+        'El role de medico ya existe',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    //? Creamos un nuevo role
+    const newRole = this.roleRepository.create({
+      role_name: 'medico',
+      role_description: 'Rol de medico',
+    });
+
+    //? Guardamos el nuevo role
+    return await this.roleRepository.save(newRole);
+  }
 
 
 
