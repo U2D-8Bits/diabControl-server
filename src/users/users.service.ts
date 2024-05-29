@@ -62,7 +62,7 @@ export class UsersService {
       user_email: 'wilmer@gmail.com',
       user_phone: '0959587864',
       user_address: 'Santo Domingo',
-      user_birthdate: new Date('1999-10-26'),
+      user_birthdate: '1999-10-10',
       user_genre: 'Masculino',
       user_ced: '1725412365',
       user_status: true,
@@ -70,7 +70,10 @@ export class UsersService {
     });
 
     //? Guardamos el usuario
-    const user = await this.userRepository.save(newUser);
+    const user = await this.userRepository.save({
+      ...newUser,
+      role: roleExist,
+    });
 
     //? Retornamos el usuario
     return user;
@@ -131,7 +134,10 @@ export class UsersService {
       const newUser = this.userRepository.create(createUserDto);
 
       //? Guardamos el usuario
-      const user = await this.userRepository.save(newUser);
+      const user = await this.userRepository.save({
+        ...newUser,
+        role: roleFound,
+      });
 
       //? Retornamos el usuario
       return user;

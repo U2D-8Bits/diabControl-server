@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { IsBoolean, IsDate, IsEmail, IsNumber, IsPhoneNumber, IsString, MinLength } from "class-validator"
+import { IsBoolean, IsEmail, IsNumber, IsPhoneNumber, IsString, MinLength } from "class-validator"
 
 
 export class CreateUserDto {
@@ -27,8 +27,8 @@ export class CreateUserDto {
     @IsString()
     user_address: string
 
-    @IsDate()
-    user_birthdate: Date
+    @IsString()
+    user_birthdate: string
 
     @IsString()
     user_genre: string

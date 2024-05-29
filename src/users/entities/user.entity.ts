@@ -34,8 +34,8 @@ export class User {
     user_address: string
 
 
-    @Column({type: 'date', nullable: false})
-    user_birthdate: Date
+    @Column({type: 'varchar', length: 255, nullable: false})
+    user_birthdate: string
 
 
     @Column({type: 'varchar', length: 255, nullable: false})
