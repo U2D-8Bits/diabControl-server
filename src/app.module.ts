@@ -4,8 +4,11 @@
 import { Module } from '@nestjs/common';
 import { RoleModule } from './role/role.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
+import { ChatModule } from './chat/chat.module';
+import { InformsModule } from './informs/informs.module';
+import { FormsModule } from './forms/forms.module';
 
 @Module({
   imports: [
@@ -22,7 +25,11 @@ import { ConfigModule } from '@nestjs/config';
       synchronize: true,
     }),
     RoleModule,
-    UsersModule],
+    UsersModule,
+    ChatModule,
+    InformsModule,
+    FormsModule,
+  ],
   controllers: [],
   providers: [],
 })
@@ -32,17 +39,6 @@ import { ConfigModule } from '@nestjs/config';
 
 export class AppModule {
   
-  // Imprimimos en consola toda la información de la base de datos
-  constructor() {
-    console.log(`DB_PORT: ${process.env.PGPORT ?? 3000}`);
-    console.log(`DB_HOST: ${process.env.PGHOST}`);
-    console.log(`DB_PORT: ${process.env.PGPORT}`);
-    console.log(`DB_USER: ${process.env.PGUSER}`);
-    console.log(`DB_PASSWORD: ${process.env.PGPASSWORD}`);
-    console.log(`DB_NAME: ${process.env.POSTGRES_DB}`);
 
-    // Imprimimos en consola la ruta que se debe usar en postman
-    console.log(`http://localhost:${process.env.PORT ?? 3000}/api/role`);
-  }
 
 }

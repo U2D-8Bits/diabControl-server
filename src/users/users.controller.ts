@@ -28,16 +28,13 @@ export class UsersController {
     private userService: UsersService,
   ) {}
 
-  //! Ruta para crear un usuario superadmin
-  @Post('superadmin')
-  createSuperAdmin(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createSuperAdmin(createUserDto);
+  //! Ruta para crear el usuario dueno del sistema
+  @Post('create-admin')
+  createAdmin(){
+    return this.usersService.createMedicUser();
   }
 
 
-
-
-  
   //! Ruta para crear un usuario
   @UseGuards(AuthGuard)
   @Post()
@@ -64,6 +61,15 @@ export class UsersController {
   @Get()
   findAll(@Request() req: Request) {
     return this.usersService.findAll();
+  }
+
+
+
+  //! Ruta para listar todos los usuarios de rol medico
+  @UseGuards(TokenGuard)
+  @Get('medics')
+  findAllUsers(@Request() req: Request) {
+    return this.usersService.findAllMedicos();
   }
 
 
@@ -118,6 +124,9 @@ export class UsersController {
   }
 
 
+
+
+
   //! Ruta para cambiar el status de un usuario por id
   @UseGuards(AuthGuard)
   @Patch(':id/status')
@@ -127,6 +136,8 @@ export class UsersController {
 
 
 
+
+  
   //! Ruta para eliminar un usuario por id
   @UseGuards(AuthGuard)
   @Delete(':id')
