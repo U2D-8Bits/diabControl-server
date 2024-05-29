@@ -12,9 +12,6 @@ export class Form {
     @Column({ type: 'varchar', length: 255, nullable: false })
     form_title: string;
 
-    @Column({ type: 'jsonb', nullable: false })
-    form_content: any;
-
     @CreateDateColumn()
     created_at: Date;
 

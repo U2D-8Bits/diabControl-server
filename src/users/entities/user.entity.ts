@@ -30,6 +30,17 @@ export class User {
     @Column({type: 'varchar', length: 255, unique: true, nullable: false})
     user_phone: string
 
+    @Column({type: 'varchar', length: 255, nullable: false})
+    user_address: string
+
+
+    @Column({type: 'date', nullable: false})
+    user_birthdate: Date
+
+
+    @Column({type: 'varchar', length: 255, nullable: false})
+    user_genre: string
+
     @Column({type: 'varchar', length:10, unique: true, nullable: false})
     user_ced: string
 

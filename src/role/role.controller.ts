@@ -11,6 +11,11 @@ export class RoleController {
 
   constructor(private readonly roleService: RoleService) {}
 
+  //! Ruta para crear un role de medico automaticamente
+  @Post('create-medic-role')
+  createMedicRole() {
+    return this.roleService.createMedicRole();
+  }
 
 
 

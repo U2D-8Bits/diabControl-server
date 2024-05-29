@@ -3,7 +3,7 @@
 
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-import { IsBoolean, IsEmail, IsOptional, IsPhoneNumber, IsString, MinLength } from 'class-validator';
+import { IsBoolean, IsDate, IsEmail, IsOptional, IsPhoneNumber, IsString, MinLength } from 'class-validator';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
 
@@ -31,6 +31,18 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsPhoneNumber('EC')
     @IsOptional()
     user_phone?: string
+
+    @IsString()
+    @IsOptional()
+    user_address?: string
+
+    @IsDate()
+    @IsOptional()
+    user_birthdate?: Date
+
+    @IsString()
+    @IsOptional()
+    user_genre?: string
 
     @IsString()
     @IsOptional()
