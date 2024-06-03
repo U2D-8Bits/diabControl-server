@@ -74,8 +74,11 @@ export class FormsService {
       throw new HttpException('No se encontraron registros', HttpStatus.NOT_FOUND);
     }
 
-    //Si existe el formulario, lo retornamos
-    return formFounded;
+    //Si existe el formulario, con el usuario asociado
+    return this.formRepository.findOne({
+      where: { id_form: id },
+      relations: ['user']
+    })
   }
 
 
@@ -102,7 +105,8 @@ export class FormsService {
 
     //Si el usuario tiene formularios asociados, los retornamos
     return this.formRepository.find({
-      where: { user: userFounded }
+      where: { user: userFounded },
+      relations: ['user']
     });
   }
 
@@ -112,7 +116,19 @@ export class FormsService {
 
   //! Metodo para actualizar un formulario
   update(id: number, updateFormDto: UpdateFormDto) {
-    return `This action updates a #${id} form`;
+    
+    //Verificamos que el formulario exista
+    const formFounded = this.formRepository.findOne({
+      where: { id_form: id }
+    });
+
+    //Si no existe el formulario, lanzamos un error
+    if(!formFounded){
+      throw new HttpException('No se encontraron registros', HttpStatus.NOT_FOUND);
+    }
+
+    //Si existe el formulario, lo actualizamos
+    return this.formRepository.update(id, updateFormDto);
   }
 
 
@@ -121,6 +137,18 @@ export class FormsService {
 
   //! Metodo para eliminar un formulario
   remove(id: number) {
-    return `This action removes a #${id} form`;
+      
+      //Verificamos que el formulario exista
+      const formFounded = this.formRepository.findOne({
+        where: { id_form: id }
+      });
+  
+      //Si no existe el formulario, lanzamos un error
+      if(!formFounded){
+        throw new HttpException('No se encontraron registros', HttpStatus.NOT_FOUND);
+      }
+  
+      //Si existe el formulario, lo eliminamos
+      return this.formRepository.delete(id);
   }
 }

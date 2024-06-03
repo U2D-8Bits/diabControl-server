@@ -27,7 +27,7 @@ export class UsersService {
   ) {}
 
 
-  //! Ruta para crear un usuario medico automaticamente
+  //! Ruta para crear un usuario medico automaticamente con administrador activo
   async createMedicUser() {
 
     //? Buscamos si existe un rol con el nombre de medico
@@ -56,7 +56,7 @@ export class UsersService {
     //? Creamos un nuevo usuario
     const newUser = this.userRepository.create({
       user_name: 'Wilmer',
-      user_lastname: 'Barros',
+      user_lastname: 'Oviedo Barros',
       user_username: 'medico',
       user_password: 'medico123456',
       user_email: 'wilmer@gmail.com',
@@ -65,6 +65,8 @@ export class UsersService {
       user_birthdate: '1999-10-10',
       user_genre: 'Masculino',
       user_ced: '1725412365',
+      user_age: 40,
+      user_admin: true,
       user_status: true,
       role_id: roleExist.id_role,
     });

@@ -24,6 +24,9 @@ export class CreateUserDto {
     @IsPhoneNumber('EC')
     user_phone: string
 
+    @IsNumber()
+    user_age: number
+
     @IsString()
     user_address: string
 
@@ -38,6 +41,9 @@ export class CreateUserDto {
 
     @IsBoolean()
     user_status: boolean
+
+    @IsBoolean()
+    user_admin: boolean
 
     @IsNumber()
     role_id: number
