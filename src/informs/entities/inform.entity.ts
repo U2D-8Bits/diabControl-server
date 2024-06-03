@@ -3,21 +3,21 @@ import { Form } from "src/forms/entities/form.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity()
+@Entity({name: 'tb_informs'})
 export class Inform {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({name:'int_id_inform'})
     id_inform: number;
 
-    @Column({ type: 'varchar', length: 255, nullable: false })
+    @Column({name: 'str_inform_title', type: 'varchar', length: 255, nullable: false })
     inform_title: string;
     
     @Column({ type: 'jsonb', nullable: false })
     inform_content: string;
 
-    @CreateDateColumn()
+    @CreateDateColumn({name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     created_at: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({name: 'updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP'})
     updated_at: Date;
     
     @ManyToOne( () => User, user => user.informs, {onDelete: 'CASCADE'} )

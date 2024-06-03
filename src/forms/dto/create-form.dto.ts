@@ -63,10 +63,6 @@ export class CreateFormDto {
 
     @IsString()
     @IsOptional()
-    form_diabetes_objective: string;
-
-    @IsString()
-    @IsOptional()
     form_additional_questions: string;
     
 
