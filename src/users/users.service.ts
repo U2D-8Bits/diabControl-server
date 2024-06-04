@@ -26,10 +26,8 @@ export class UsersService {
     @InjectRepository(Role) private roleRepository: Repository<Role>,
   ) {}
 
-
   //! Ruta para crear un usuario medico automaticamente con administrador activo
   async createMedicUser() {
-
     //? Buscamos si existe un rol con el nombre de medico
     const roleExist = await this.roleRepository.findOne({
       where: { role_name: 'medico' },
@@ -37,12 +35,15 @@ export class UsersService {
 
     //? Si no existe el rol de medico lanzamos un error
     if (!roleExist) {
-      throw new HttpException('Rol de medico no encontrado', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Rol de medico no encontrado',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     //? Buscamos si existe un usuario con el nombre de medico
     const userExist = await this.userRepository.findOne({
-      where: { user_username: 'medico' },
+      where: { user_username: 'medicoAdmin' },
     });
 
     //? Si existe un usuario con el nombre de medico lanzamos un error
@@ -57,8 +58,8 @@ export class UsersService {
     const newUser = this.userRepository.create({
       user_name: 'Wilmer',
       user_lastname: 'Oviedo Barros',
-      user_username: 'medico',
-      user_password: 'medico123456',
+      user_username: 'medicoAdmin',
+      user_password: 'admin123456',
       user_email: 'wilmer@gmail.com',
       user_phone: '0959587864',
       user_address: 'Santo Domingo',
@@ -83,71 +84,66 @@ export class UsersService {
 
   //! Metodo para crear un usuario
   async create(createUserDto: CreateUserDto) {
-    
-      //? Buscamos el rol por id
-      const roleFound = await this.roleRepository.findOne({
-        where: { id_role: createUserDto.role_id },
-      });
+    //? Buscamos el rol por id
+    const roleFound = await this.roleRepository.findOne({
+      where: { id_role: createUserDto.role_id },
+    });
 
-      //? Si no existe el rol lanzamos un error
-      if (!roleFound) {
-        throw new HttpException('Rol no encontrado', HttpStatus.NOT_FOUND);
-      }
+    //? Si no existe el rol lanzamos un error
+    if (!roleFound) {
+      throw new HttpException('Rol no encontrado', HttpStatus.NOT_FOUND);
+    }
 
-      //? validamos que el username, email, cedula y telefono no existan en otro usuario
-      const userFound = await this.userRepository.findOne({
-        where: [
-          { user_username: createUserDto.user_username },
-          { user_email: createUserDto.user_email },
-          { user_ced: createUserDto.user_ced },
-          { user_phone: createUserDto.user_phone },
-        ],
-      });
+    //? validamos que el username, email, cedula y telefono no existan en otro usuario
+    const userFound = await this.userRepository.findOne({
+      where: [
+        { user_username: createUserDto.user_username },
+        { user_email: createUserDto.user_email },
+        { user_ced: createUserDto.user_ced },
+        { user_phone: createUserDto.user_phone },
+      ],
+    });
 
-      //? Si el username, email, cedula o telefono ya existen lanzamos un error
-      switch (true) {
-        case userFound?.user_username === createUserDto.user_username:
-          throw new HttpException(
-            'Nombre de usuario ya existe',
-            HttpStatus.BAD_REQUEST,
-          );
-        case userFound?.user_email === createUserDto.user_email:
-          throw new HttpException('Email ya existe', HttpStatus.BAD_REQUEST);
-        case userFound?.user_ced === createUserDto.user_ced:
-          throw new HttpException('Cedula ya existe', HttpStatus.BAD_REQUEST);
-        case userFound?.user_phone === createUserDto.user_phone:
-          throw new HttpException('Telefono ya existe', HttpStatus.BAD_REQUEST);
-      }
-
-      //? validamos que el username, email, cedula y telefono no sean de longitud 0
-      if (
-        createUserDto.user_username.length === 0 ||
-        createUserDto.user_email.length === 0 ||
-        createUserDto.user_ced.toString().length === 0 ||
-        createUserDto.user_phone.length === 0
-      ) {
+    //? Si el username, email, cedula o telefono ya existen lanzamos un error
+    switch (true) {
+      case userFound?.user_username === createUserDto.user_username:
         throw new HttpException(
-          'Los campos no pueden ser vacios',
+          'Nombre de usuario ya existe',
           HttpStatus.BAD_REQUEST,
         );
-      }
+      case userFound?.user_email === createUserDto.user_email:
+        throw new HttpException('Email ya existe', HttpStatus.BAD_REQUEST);
+      case userFound?.user_ced === createUserDto.user_ced:
+        throw new HttpException('Cedula ya existe', HttpStatus.BAD_REQUEST);
+      case userFound?.user_phone === createUserDto.user_phone:
+        throw new HttpException('Telefono ya existe', HttpStatus.BAD_REQUEST);
+    }
 
-      //? Creamos un nuevo usuario
-      const newUser = this.userRepository.create(createUserDto);
+    //? validamos que el username, email, cedula y telefono no sean de longitud 0
+    if (
+      createUserDto.user_username.length === 0 ||
+      createUserDto.user_email.length === 0 ||
+      createUserDto.user_ced.toString().length === 0 ||
+      createUserDto.user_phone.length === 0
+    ) {
+      throw new HttpException(
+        'Los campos no pueden ser vacios',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-      //? Guardamos el usuario
-      const user = await this.userRepository.save({
-        ...newUser,
-        role: roleFound,
-      });
+    //? Creamos un nuevo usuario
+    const newUser = this.userRepository.create(createUserDto);
 
-      //? Retornamos el usuario
-      return user;
+    //? Guardamos el usuario
+    const user = await this.userRepository.save({
+      ...newUser,
+      role: roleFound,
+    });
+
+    //? Retornamos el usuario
+    return user;
   }
-
-
-
-
 
   //! Metodo para loguear un usuario
   async loginUser(loginDto: LoginDto): Promise<any> {
@@ -177,16 +173,12 @@ export class UsersService {
       );
     }
 
-    //? Retornamos el usuario y el token
+    //? Retornamos el usuario, el token y el rol
     return {
       user,
       token: this.getJwtToken({ id: user.id_user.toString() }),
     };
   }
-
-
-
-
 
   //! Metodo para listar todos los usuarios
   async findAll() {
@@ -199,10 +191,6 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-
-
-
-
   //! Metodo para listar todos los usuarios de rol paciente
   async findAllPacientes() {
     //? Si no existe ningun usuario lanzamos un error
@@ -211,27 +199,19 @@ export class UsersService {
     }
 
     //? Retornamos todos los usuarios
-    return this.userRepository.find({where: {role_id: 2}});
-  } 
-
-
-
-
+    return this.userRepository.find({ where: { role_id: 2 } });
+  }
 
   //! Metodo para listar todos los usuarios de rol medico
-  async findAllMedicos(){
+  async findAllMedicos() {
     //? Si no existe ningun usuario lanzamos un error
     if ((await this.userRepository.find()).length === 0) {
       throw new HttpException('No existe ningun usuario', HttpStatus.NOT_FOUND);
     }
 
     //? Retornamos todos los usuarios
-    return this.userRepository.find({where: {role_id: 1}});
+    return this.userRepository.find({ where: { role_id: 1 } });
   }
-
-
-
-
 
   //! Metodo para buscar un usuario por id
   async findOne(id: number) {
@@ -250,10 +230,6 @@ export class UsersService {
     return userFound;
   }
 
-
-
-
-
   //! Metodo para buscar un usuario por ID  para usar en el Guard (AuthGuard)
   async findUserByID(id: number) {
     //? Buscamos el usuario por id
@@ -270,34 +246,35 @@ export class UsersService {
     return user;
   }
 
-
-
-
-
   //! Metodo para actualizar un usuario por id
   async update(id: number, updateUserDto: UpdateUserDto) {
+    //? Buscamos el usuario por id
+    const userFound = await this.userRepository.findOne({
+      where: { id_user: id },
+    });
 
-      //? Buscamos el usuario por id
-      const userFound = await this.userRepository.findOne({
-        where: { id_user: id },
-      });
+    //? Si no existe el usuario lanzamos un error
+    if (!userFound) {
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
 
-      //? Si no existe el usuario lanzamos un error
-      if (!userFound) {
-        throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
-      }
+    //? Buscamos el rol por id
+    const roleFound = await this.roleRepository.findOne({
+      where: { id_role: updateUserDto.role_id },
+    });
 
-      //? Buscamos el rol por id
-      const roleFound = await this.roleRepository.findOne({
-        where: { id_role: updateUserDto.role_id },
-      });
+    //? Si no existe el rol lanzamos un error
+    if (!roleFound) {
+      throw new HttpException('Rol no encontrado', HttpStatus.NOT_FOUND);
+    }
 
-      //? Si no existe el rol lanzamos un error
-      if (!roleFound) {
-        throw new HttpException('Rol no encontrado', HttpStatus.NOT_FOUND);
-      }
-
-      //? validamos que el username, email, cedula y telefono no existan en otro usuario pero si es del mismo usuario no lanzamos error
+    //? Validamos que el username, email, cedula y telefono no existan en otro usuario pero si es del mismo usuario no lanzamos error
+    if (
+      updateUserDto.user_username ||
+      updateUserDto.user_email ||
+      updateUserDto.user_ced ||
+      updateUserDto.user_phone
+    ) {
       const userFounded = await this.userRepository.findOne({
         where: [
           { user_username: updateUserDto.user_username },
@@ -325,30 +302,15 @@ export class UsersService {
           userFounded?.id_user !== userFound.id_user:
           throw new HttpException('Telefono ya existe', HttpStatus.BAD_REQUEST);
       }
+    }
 
+    //? Actualizamos el usuario
+    const updatedUser = Object.assign(userFound, updateUserDto);
+    await this.userRepository.save(updatedUser);
 
-      //? validamos que el username, email, cedula y telefono no sean de longitud 0
-      if (
-        updateUserDto.user_username.length === 0 ||
-        updateUserDto.user_email.length === 0 ||
-        updateUserDto.user_ced.toString().length === 0 ||
-        updateUserDto.user_phone.length === 0
-      ) {
-        throw new HttpException(
-          'Los campos no pueden ser vacios',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
-      //? Actualizamos el usuario
-      const updatedUser = await this.userRepository.update(userFound, updateUserDto);
-
-      //? Retornamos el usuario actualizado
-      return updatedUser;
+    //? Retornamos el usuario actualizado
+    return updatedUser;
   }
-
-
-
 
   //! Metodo para cambiar el status de un usuario por id
   async changeStatus(id: number) {
@@ -372,7 +334,6 @@ export class UsersService {
     return userFound;
   }
 
-
   //! Metodo para eliminar un usuario por id
   async remove(id: number) {
     //? Buscamos el usuario por id
@@ -392,16 +353,9 @@ export class UsersService {
     throw new HttpException('Usuario eliminado', HttpStatus.OK);
   }
 
-
-
-
   //! get Jason Web Token
   getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;
   }
-
-
-
-
 }

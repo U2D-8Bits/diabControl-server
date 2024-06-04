@@ -6,7 +6,6 @@ import { RoleModule } from './role/role.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { ChatModule } from './chat/chat.module';
 import { InformsModule } from './informs/informs.module';
 import { FormsModule } from './forms/forms.module';
 
@@ -26,7 +25,6 @@ import { FormsModule } from './forms/forms.module';
     }),
     RoleModule,
     UsersModule,
-    ChatModule,
     InformsModule,
     FormsModule,
   ],
