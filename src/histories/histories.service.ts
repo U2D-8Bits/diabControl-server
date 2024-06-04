@@ -59,9 +59,16 @@ export class HistoriesService {
   //! Servicio para listar todos los historiales clinicos
   async findAll() {
 
+    //* Lanzamos un mensaje de que no existen historias clinicas
+    if( (await this.historyRepository.find()).length === 0){
+      return 'No existen historias clinicas actualmente';
+    }
+
+    //* Si existen historias clinicas devolvemos el resultado
     return await this.historyRepository.find({
       relations: ['medico', 'paciente']
     });
+
   }
 
   //! Servicio para listar todas las historias clinicas de un paciente por su id
@@ -75,6 +82,15 @@ export class HistoriesService {
     //* Verificamos que el paciente exista
     if( !userPaciente){
       throw new HttpException('El paciente no existe', HttpStatus.NOT_FOUND);
+    }
+
+    //* si no existen historias clinicas del paciente lanzamos un mensaje
+    if( 
+      (await this.historyRepository.find({
+        where: {paciente: userPaciente}
+      })).length === 0
+    ){
+      return 'No existen historias clinicas para este paciente';
     }
 
     //* Retornamos todas las historias clinicas del paciente
