@@ -59,7 +59,7 @@ export class AuthGuard implements CanActivate {
       }
 
       //* Validamos que el rol sea medico o superadmin
-      if(role.role_name !== 'medico' && role.role_name !== 'superadmin'){
+      if(role.role_name !== 'medico'){
         throw new UnauthorizedException('Rol no permitido');
       }
 

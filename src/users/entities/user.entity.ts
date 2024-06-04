@@ -1,6 +1,4 @@
 /* eslint-disable prettier/prettier */
-import { Chat } from "src/chat/entities/chat.entity";
-import { Message } from "src/chat/entities/message.entity";
 import { Form } from "src/forms/entities/form.entity";
 import { Inform } from "src/informs/entities/inform.entity";
 import { Role } from "src/role/entities/role.entity";
@@ -70,13 +68,5 @@ export class User {
 
     @OneToMany( () => Form, form => form.user )
     forms: Form[]
-
-    // Un usuario puede tener muchos chats
-    @OneToMany( () => Chat, (chat) => chat.users)
-    chats: Chat[]
-
-    // Un usuario puede tener muchos mensajes
-    @OneToMany( () => Message, (message) => message.user)
-    messages: Message[]
 
 }
