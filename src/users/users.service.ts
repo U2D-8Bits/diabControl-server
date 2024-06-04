@@ -346,11 +346,12 @@ export class UsersService {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    //? Eliminamos el usuario y enviamo un mensaje
-    await this.userRepository.delete(userFound);
 
-    //? Retornamos un mensaje
-    throw new HttpException('Usuario eliminado', HttpStatus.OK);
+    //? Eliminamos el usuario
+    await this.userRepository.delete({ id_user: id });
+    
+    //? Retornamos un mensaje de confirmación
+    return { message: 'Usuario eliminado' };
   }
 
   //! get Jason Web Token
