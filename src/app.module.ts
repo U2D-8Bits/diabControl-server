@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { InformsModule } from './informs/informs.module';
 import { FormsModule } from './forms/forms.module';
+import { HistoriesModule } from './histories/histories.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { FormsModule } from './forms/forms.module';
     UsersModule,
     InformsModule,
     FormsModule,
+    HistoriesModule,
   ],
   controllers: [],
   providers: [],

@@ -26,6 +26,10 @@ export class UsersService {
     @InjectRepository(Role) private roleRepository: Repository<Role>,
   ) {}
 
+
+
+
+
   //! Ruta para crear un usuario medico automaticamente con administrador activo
   async createMedicUser() {
     //? Buscamos si existe un rol con el nombre de medico
@@ -81,6 +85,10 @@ export class UsersService {
     //? Retornamos el usuario
     return user;
   }
+
+
+
+
 
   //! Metodo para crear un usuario
   async create(createUserDto: CreateUserDto) {
@@ -145,6 +153,10 @@ export class UsersService {
     return user;
   }
 
+
+
+
+
   //! Metodo para loguear un usuario
   async loginUser(loginDto: LoginDto): Promise<any> {
     //? Buscamos el usuario por username
@@ -180,6 +192,10 @@ export class UsersService {
     };
   }
 
+
+
+
+
   //! Metodo para listar todos los usuarios
   async findAll() {
     //? Si no existe ningun usuario lanzamos un error
@@ -190,6 +206,10 @@ export class UsersService {
     //? Retornamos todos los usuarios
     return this.userRepository.find();
   }
+
+
+
+
 
   //! Metodo para listar todos los usuarios de rol paciente
   async findAllPacientes() {
@@ -202,6 +222,10 @@ export class UsersService {
     return this.userRepository.find({ where: { role_id: 2 } });
   }
 
+
+
+
+
   //! Metodo para listar todos los usuarios de rol medico
   async findAllMedicos() {
     //? Si no existe ningun usuario lanzamos un error
@@ -212,6 +236,10 @@ export class UsersService {
     //? Retornamos todos los usuarios
     return this.userRepository.find({ where: { role_id: 1 } });
   }
+
+
+
+
 
   //! Metodo para buscar un usuario por id
   async findOne(id: number) {
@@ -230,6 +258,10 @@ export class UsersService {
     return userFound;
   }
 
+
+
+
+
   //! Metodo para buscar un usuario por ID  para usar en el Guard (AuthGuard)
   async findUserByID(id: number) {
     //? Buscamos el usuario por id
@@ -245,6 +277,10 @@ export class UsersService {
     //? Retornamos el usuario
     return user;
   }
+
+
+
+
 
   //! Metodo para actualizar un usuario por id
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -312,6 +348,10 @@ export class UsersService {
     return updatedUser;
   }
 
+
+
+
+
   //! Metodo para cambiar el status de un usuario por id
   async changeStatus(id: number) {
     //? Buscamos el usuario por id
@@ -334,6 +374,10 @@ export class UsersService {
     return userFound;
   }
 
+
+
+
+
   //! Metodo para eliminar un usuario por id
   async remove(id: number) {
     //? Buscamos el usuario por id
@@ -346,13 +390,18 @@ export class UsersService {
       throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
     }
 
-    //? Eliminamos el usuario y enviamo un mensaje
-    await this.userRepository.delete(userFound);
 
-    //? Retornamos un mensaje
-    throw new HttpException('Usuario eliminado', HttpStatus.OK);
+    //? Eliminamos el usuario
+    await this.userRepository.delete({ id_user: id });
+    
+    //? Retornamos un mensaje de confirmación
+    return { message: 'Usuario eliminado' };
   }
 
+
+
+
+  
   //! get Jason Web Token
   getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
