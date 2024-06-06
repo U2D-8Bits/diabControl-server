@@ -26,7 +26,7 @@ export class History {
     @Column({name: 'float_temperature_patient', type: 'float', nullable: true})
     temperature_patient: number
 
-    @Column({name: 'str_consult_reaason', type: 'varchar', length: 255, nullable: false})
+    @Column({name: 'str_consult_reason', type: 'varchar', length: 255, nullable: false})
     consult_reason: string
 
     @Column({name: 'str_fisic_exam', type: 'varchar', length: 255, nullable: false})
@@ -49,7 +49,7 @@ export class History {
 
     @UpdateDateColumn({name:'dt_updated_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     updated_at: Date
-
+    
     //Relaciones
     @ManyToOne( () => User, user => user.historiesCreated)
     medico: User

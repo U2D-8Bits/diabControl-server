@@ -84,20 +84,19 @@ export class HistoriesService {
       throw new HttpException('El paciente no existe', HttpStatus.NOT_FOUND);
     }
 
-    //* si no existen historias clinicas del paciente lanzamos un mensaje
-    if( 
-      (await this.historyRepository.find({
-        where: {paciente: userPaciente}
-      })).length === 0
-    ){
-      return 'No existen historias clinicas para este paciente';
+    //* Buscamos los historiales por el id del paciente
+    const historiesFounded = await this.historyRepository.find({
+      where: {paciente: { id_user: id }},
+      relations: ['medico', 'paciente']
+    });
+
+    //* Verificamos que existan historiales clinicos
+    if( historiesFounded.length === 0){
+      return 'El paciente no tiene historias clinicas';
     }
 
     //* Retornamos todas las historias clinicas del paciente
-    return await this.historyRepository.find({
-      where: {paciente: userPaciente},
-      relations: ['medico', 'paciente']
-    });
+    return historiesFounded
   }
 
 
