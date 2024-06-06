@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Form } from "src/forms/entities/form.entity";
+import { History } from "src/histories/entities/history.entity";
 import { Inform } from "src/informs/entities/inform.entity";
 import { Role } from "src/role/entities/role.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -68,5 +69,11 @@ export class User {
 
     @OneToMany( () => Form, form => form.user )
     forms: Form[]
+
+    @OneToMany( ()=> History, history => history.medico)
+    historiesCreated: History[]
+
+    @OneToMany( ()=> History, history => history.paciente)
+    historiesRecived: History[]
 
 }
