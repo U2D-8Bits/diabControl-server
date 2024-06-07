@@ -73,7 +73,7 @@ export class ActService {
 
     //* Verificamos que exista el Acta
     if( !actData ){
-      throw new HttpException('El Acta no existe', HttpStatus.NOT_FOUND);
+      throw new HttpException('El Acta no existe o no se puedo encontrar', HttpStatus.NOT_FOUND);
     }
 
 
@@ -107,7 +107,7 @@ export class ActService {
 
     //* Verficiamos que el Acta exista
     if( !actData){
-      throw new HttpException('No existe un Acta registrada', HttpStatus.NOT_FOUND)
+      throw new HttpException('No existe un Acta registrada para este paciente', HttpStatus.NOT_FOUND)
     }
 
     //* Si existe el actData, lo retornamos
