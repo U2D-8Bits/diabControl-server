@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
+import { Act } from "src/act/entities/act.entity";
 import { Form } from "src/forms/entities/form.entity";
 import { History } from "src/histories/entities/history.entity";
 import { Inform } from "src/informs/entities/inform.entity";
 import { Role } from "src/role/entities/role.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({name: 'tb_users'})
 export class User {
@@ -60,6 +61,9 @@ export class User {
 
     @Column({name: 'int_role_id', type: 'int'})
     role_id: number
+
+    @OneToOne( () => Act, act => act.user)
+    act: Act
 
     @ManyToOne( () => Role, (role) => role.users, {onDelete: 'CASCADE'})
     role: Role
