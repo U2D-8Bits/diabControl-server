@@ -5,6 +5,7 @@ import { ActService } from './act.service';
 import { CreateActDto } from './dto/create-act.dto';
 import { UpdateActDto } from './dto/update-act.dto';
 import { Response } from 'express';
+import * as path from 'path'; // Importa el módulo path
 
 @Controller('act')
 export class ActController {
@@ -45,15 +46,19 @@ export class ActController {
   update(@Param('id', ParseIntPipe) id: number, @Body() updateActDto: UpdateActDto) {
     return this.actService.update(id, updateActDto);
   }
+  
+  @Get("pdf/act/:id")
+  async downloadPDF(@Param('id', ParseIntPipe) id: number, @Res() res): Promise<void> {
+    const buffer = await this.actService.generarPDF(id);
 
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=acta-${id}.pdf`,
+      'Content-Length': buffer.length,
+    })
 
-  //? Controlador para descargar un PDF de un Acta por su ID
-  @Get('/download/:id')
-  async downloadPDF(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
-    const pdfPath = await this.actService.generatePDF(id);
-    res.download(pdfPath);
+    res.end(buffer);
   }
-
 
 
   //? Controlaador para eliminar un Acta por su ID

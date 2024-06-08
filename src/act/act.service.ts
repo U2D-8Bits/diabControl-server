@@ -11,6 +11,7 @@ import { User } from 'src/users/entities/user.entity';
 import * as PDFDocument from 'pdfkit';
 import * as fs from 'fs';
 import * as path from 'path';
+import { isUppercase } from 'class-validator';
 
 @Injectable()
 export class ActService {
@@ -106,10 +107,7 @@ export class ActService {
 
     //* Verficiamos que el Acta exista
     if (!actData) {
-      throw new HttpException(
-        'No existe un Acta registrada para este paciente',
-        HttpStatus.NOT_FOUND,
-      );
+      return 'No se encontro ningun acta para este paciente'
     }
 
     //* Si existe el actData, lo retornamos
@@ -135,23 +133,9 @@ export class ActService {
     return await this.actRepository.save(actData);
   }
 
-  //! Método para asegurar que la carpeta existe
-  ensureDirectoryExistence(filePath: string) {
-    const dirname = path.dirname(filePath);
-    if (fs.existsSync(dirname)) {
-      return true;
-    }
-    fs.mkdirSync(dirname, { recursive: true });
-  }
-
   //! Generar un PDF con la informacion de un Acta
-  async generatePDF(id: number): Promise<string> {
-    const pdfPath = `./pdfs/acta_${id}.pdf`;
-
-    // Aseguramos que la carpeta existe
-    this.ensureDirectoryExistence(pdfPath);
-
-    const doc = new PDFDocument({ size: 'A4', margin: 50 });
+  //Generar PDF prueba
+  async generarPDF(id: number): Promise<Buffer>  {
 
     const actData = await this.actRepository.findOne({
       where: { id },
@@ -162,162 +146,180 @@ export class ActService {
       throw new Error('Acta not found');
     }
 
-    doc.pipe(fs.createWriteStream(pdfPath));
+      const pdfBuffer: Buffer = await new Promise( resolve => {
 
-    // Colocamos un encabezado con el título del documento
-    doc.fontSize(18).text('CONSULTORIO MEDICO MILAGRO', { align: 'center' });
-    doc
-      .fontSize(12)
-      .text(
-        'CIUDAD VERDE MZ 104 C5 REFUGIO PAMBILAR ENTRE PODOCARPUS Y TIMALIES',
-        { align: 'center' },
-      );
-    doc
-      .fontSize(12)
-      .text('consultoriomedicomilagro@yahoo.com', { align: 'center' });
-    doc.fontSize(12).text('Santo Domingo-Ecuador', { align: 'center' });
-    doc.moveDown(2); // Agregar espacio después del encabezado
+        const doc =  new PDFDocument(
+          {
+            size: "A4",
+            layout: "portrait",
+            margins: { top: 30, bottom: 30, left: 30, right: 30 },
+            bufferPages: true
+          })
 
-    doc.fontSize(16).text('Consentimiento Informado de Paciente', {
-      align: 'center',
-    });
+          //todo
+          doc.font('Helvetica-Bold').fontSize(16).text('CONSULTORIO MEDICO MILAGRO', { align: 'center' });
+          doc
+            .font('Helvetica')
+            .fontSize(11)
+            .text(
+              'CIUDAD VERDE MZ 104 C5 REFUGIO PAMBILAR ENTRE PODOCARPUS Y TIMALIES',
+              { align: 'center' },
+            );
+          doc
+            .font('Helvetica')
+            .fontSize(11)
+            .text('consultoriomedicomilagro@yahoo.com', { align: 'center' });
+          doc
+          .font('Helvetica')
+          .fontSize(11)
+          .text('Santo Domingo-Ecuador', { align: 'center' });
+          doc.moveDown(2); // Agregar espacio después del encabezado
+    
+          doc
+          .font('Helvetica-Bold')
+          .fontSize(12)
+          .text('CONSENTIMIENTO INFORMADO DE PACIENTES', {
+            align: 'center',
+          });
+    
+          // Generamos una tabla con la información del usuario
+          doc.moveDown();
+          doc
+          .font('Helvetica')
+          .fontSize(11)
+          .text('DATOS DEL PACIENTE');
+    
+          // En una tabla colocamos la información del paciente
+          doc.moveDown();
+          const userData = [
+            [
+              'Nombre y Apellido:',
+              actData.user.user_name + ' ' + actData.user.user_lastname,
+            ],
+            ['Cédula:', actData.user.user_ced],
+            ['Teléfono:', actData.user.user_phone],
+            ['Dirección de Domicilio:', actData.user.user_address],
+            ['Correo Electrónico:', actData.user.user_email],
+          ];
+          userData.forEach((row) => {
+            doc
+            .font('Helvetica')
+            .fontSize(10).text(row.join(' ')); // Ajusta el indent según lo desees
+          });
+    
+          doc.moveDown();
+          const additionalInfo = [
+            ['Menor de Edad:', actData.minor_age ? 'Sí' : 'No'],
+            ['Discapacidad:', actData.disability ? 'Sí' : 'No'],
+            ['Analfabetismo:', actData.illiteracy ? 'Sí' : 'No'],
+          ];
+          additionalInfo.forEach((row) => {
+            doc
+            .font('Helvetica')
+            .fontSize(10).text(row.join(' '));
+          });
+    
+          doc.moveDown();
+          doc
+          .font('Helvetica')
+          .fontSize(11).text('DATOS DEL TUTOR LEGAL O REPRESENTANTE');
+    
+          doc.moveDown();
+          const tutorData = [
+            ['Nombre y Apellido:', actData.tutor_names],
+            ['Cédula:', actData.tutor_ced],
+            ['Teléfono:', actData.tutor_phone],
+            ['Correo Electrónico:', actData.tutor_email],
+            ['Motivo de Representación:', actData.tutor_motive],
+          ];
+          tutorData.forEach((row) => {
+            doc
+            .font('Helvetica')
+            .fontSize(10).text(row.join(' '));
+          });
+    
+    
+          doc.moveDown();
+          // Colocamos un texto introductorio con tamaño 12, justificado y en negrita el primer párrafo
+          doc
+            .font('Helvetica')
+            .fontSize(10)
+            .text('El', { continued: true })
+            .font('Helvetica-Bold')
+            .text(' Consultorio Médico Milagro, ', { continued: true })
+            .font('Helvetica')
+            .text(
+              'con domicilio en Santo Domingo, en Urb. Ciudad Verde Mz 104, C5, Calle Refugio el Pambilar, en calidad de Responsable del Tratamiento de acuerdo con el Reglamento General de Protección de Datos Personales y Garantía de los derechos digitales, en relación al tratamiento de sus datos personales, le informa sobre lo siguiente:',
+              { align: 'justify' },
+            );
+    
+          doc.moveDown();
+          const items = [
+            'Finalidad del tratamiento de datos: Los datos personales que nos facilite serán usados con el fin de conservar su historial clínico y prestarles un servicio adaptado a sus necesidades, así como gestionar la contabilidad y facturación de la clínica. De igual forma, si autoriza, le mantendremos informado sobre promociones, ofertas y temas de salud por los canales facilitados.',
+            'Plazo de conservación: Los datos de su historial clínico y datos de facturación, serán conservados por los plazos legales establecidos. Los datos de contacto serán conservados mientras no solicite su derecho de supresión o baja.',
+            'Legitimación: La legitimación es el cumplimiento de obligaciones legales y el consentimiento otorgado.',
+            'Destinatarios: Sus datos podrán ser cedidos a Administraciones Públicas cuando resulte obligatorio por ley; así también a bancos y cajas de ahorro si realiza pagos con tarjeta, al laboratorio clínico que el Dispensario tiene convenio. Nos comprometemos a no ceder sus datos a ninguna otra empresa, entidad o persona física o jurídica, a menos que dicha cesión se realice por imperativo legal.',
+            'Confidencialidad: Los datos personales que nos facilite serán tratados de forma confidencial. Nuestro personal se ha comprometido previamente al deber de secreto. Se han implantado medidas técnicas y organizativas para limitar el acceso exclusivamente a las personas autorizadas.',
+            'Menores: Si el paciente fuera menor de 18 años, deberá autorizar su representante legal o titular de la patria potestad o tutela. Tenga en cuenta que podríamos solicitarle el documento de identidad para comprobar su edad, así como documentación para acreditar el motivo de representación cuando proceda.',
+            'Derechos: Puede ejercitar sus derechos de acceso, rectificación, supresión, limitación, portabilidad y oposición sobre sus datos personales, solicitándolo por escrito al Consultorio Médico Milagro, acompañando copia de su documento de identidad.',
+          ];
+    
+          items.forEach((item, index) => {
+            doc
+              .font('Helvetica')
+              .fontSize(10)
+              .text(`${index + 1}.- ${item}`, { align: 'justify' });
+          });
+    
+          doc.moveDown();
+          doc
+            .font('Helvetica')
+            .fontSize(10)
+            .text(
+              'Si desea más información sobre nuestra política de protección de datos consúltenos. Autorizo el tratamiento de mis datos personales para los fines indicados:',
+              { align: 'justify' },
+            );
+    
+          doc.moveDown();
+    
+          const currentDate = actData.created_at;
+          // Obtenemos el día, el nombre del mes y el año
+          const day = currentDate.getDate();
+          const month = currentDate.toLocaleString('es', { month: 'long' });
+          const year = currentDate.getFullYear();
+    
+          doc
+            .font('Helvetica')
+            .fontSize(10)
+            .text('En Santo Domingo, a ' + day + ' de ' + month + ' de ' + year, {
+              align: 'left',
+            });
+    
+          doc.moveDown(3);
+          doc
+            .font('Helvetica')
+            .fontSize(10)
+            .text('________________________________', { align: 'right' });
+          doc.moveDown();
+          doc
+            .font('Helvetica')
+            .fontSize(10)
+            .text('Firmado y Conforme', { align: 'right' });
 
-    // Generamos una tabla con la información del usuario
-    doc.moveDown();
-    doc.fontSize(15).text('Información del Paciente', {
-      underline: true,
-    });
 
-    // En una tabla colocamos la información del paciente
-    doc.moveDown();
-    doc.table([
-      [
-        'Nombre y Apellido',
-        'Cédula',
-        'Teléfono',
-        'Dirección de Domicilio',
-        'Correo Electrónico',
-      ],
-      [
-        actData.user.user_name + ' ' + actData.user.user_lastname,
-        actData.user.user_ced,
-        actData.user.user_phone,
-        actData.user.user_address,
-        actData.user.user_email,
-      ],
-    ]);
+          const buffer = []
+          doc.on('data', buffer.push.bind(buffer))
+          doc.on('end', () => {
+              const data = Buffer.concat(buffer)
+              resolve(data)
+          })
+          doc.end()
 
-    doc.moveDown();
-    doc.table([
-      ['Menor de Edad', 'Discapacidad', 'Analfabetismo'],
-      [
-        actData.minor_age ? 'Sí' : 'No',
-        actData.disability ? 'Sí' : 'No',
-        actData.illiteracy ? 'Sí' : 'No',
-      ],
-    ]);
 
-    doc.moveDown();
-    doc.fontSize(15).text('Información del Tutor Legal', {
-      underline: true,
-    });
+      })
 
-    doc.moveDown();
-    doc.table([
-      [
-        'Nombre y Apellido',
-        'Cédula',
-        'Teléfono',
-        'Correo Electrónico',
-        'Motivo de Representación',
-      ],
-      [
-        actData.tutor_names,
-        actData.tutor_ced,
-        actData.tutor_phone,
-        actData.tutor_email,
-        actData.tutor_motive,
-      ],
-    ]);
-
-    doc.moveDown();
-    doc.fontSize(15).text('Información del Acta', {
-      underline: true,
-    });
-
-    doc.moveDown();
-    // Colocamos un texto introductorio con tamaño 12, justificado y en negrita el primer párrafo
-    doc
-      .font('Helvetica')
-      .fontSize(12)
-      .text('El', { continued: true })
-      .font('Helvetica-Bold')
-      .text(' Consultorio Médico Milagro, ', { continued: true })
-      .font('Helvetica')
-      .text(
-        'con domicilio en Santo Domingo, en Urb. Ciudad Verde Mz 104, C5, Calle Refugio el Pambilar, en calidad de Responsable del Tratamiento de acuerdo con el Reglamento General de Protección de Datos Personales y Garantía de los derechos digitales, en relación al tratamiento de sus datos personales, le informa sobre lo siguiente:',
-        { align: 'justify' },
-      );
-
-    doc.moveDown();
-    const items = [
-      'Finalidad del tratamiento de datos: Los datos personales que nos facilite serán usados con el fin de conservar su historial clínico y prestarles un servicio adaptado a sus necesidades, así como gestionar la contabilidad y facturación de la clínica. De igual forma, si autoriza, le mantendremos informado sobre promociones, ofertas y temas de salud por los canales facilitados.',
-      'Plazo de conservación: Los datos de su historial clínico y datos de facturación, serán conservados por los plazos legales establecidos. Los datos de contacto serán conservados mientras no solicite su derecho de supresión o baja.',
-      'Legitimación: La legitimación es el cumplimiento de obligaciones legales y el consentimiento otorgado.',
-      'Destinatarios: Sus datos podrán ser cedidos a Administraciones Públicas cuando resulte obligatorio por ley; así también a bancos y cajas de ahorro si realiza pagos con tarjeta, al laboratorio clínico que el Dispensario tiene convenio. Nos comprometemos a no ceder sus datos a ninguna otra empresa, entidad o persona física o jurídica, a menos que dicha cesión se realice por imperativo legal.',
-      'Confidencialidad: Los datos personales que nos facilite serán tratados de forma confidencial. Nuestro personal se ha comprometido previamente al deber de secreto. Se han implantado medidas técnicas y organizativas para limitar el acceso exclusivamente a las personas autorizadas.',
-      'Menores: Si el paciente fuera menor de 18 años, deberá autorizar su representante legal o titular de la patria potestad o tutela. Tenga en cuenta que podríamos solicitarle el documento de identidad para comprobar su edad, así como documentación para acreditar el motivo de representación cuando proceda.',
-      'Derechos: Puede ejercitar sus derechos de acceso, rectificación, supresión, limitación, portabilidad y oposición sobre sus datos personales, solicitándolo por escrito al Consultorio Médico Milagro, acompañando copia de su documento de identidad.',
-    ];
-
-    items.forEach((item, index) => {
-      doc
-        .font('Helvetica')
-        .fontSize(12)
-        .text(`${index + 1}.- ${item}`, { align: 'justify' });
-    });
-
-    doc.moveDown();
-    doc
-      .font('Helvetica')
-      .fontSize(12)
-      .text(
-        'Si desea más información sobre nuestra política de protección de datos consúltenos. Autorizo el tratamiento de mis datos personales para los fines indicados:',
-        { align: 'justify' },
-      );
-
-    doc.moveDown();
-
-    const currentDate = actData.created_at;
-    // Obtenemos el día, el nombre del mes y el año
-    const day = currentDate.getDate();
-    const month = currentDate.toLocaleString('es', { month: 'long' });
-    const year = currentDate.getFullYear();
-
-    doc
-      .font('Helvetica')
-      .fontSize(12)
-      .text('En Santo Domingo, a ' + day + ' de ' + month + ' de ' + year, {
-        align: 'left',
-      });
-
-    doc.moveDown();
-    doc
-      .font('Helvetica')
-      .fontSize(12)
-      .text('________________________________', { align: 'right' });
-    doc.moveDown();
-    doc
-      .font('Helvetica')
-      .fontSize(12)
-      .text('Firmado y Conforme', { align: 'right' });
-
-    doc.end();
-
-    return new Promise((resolve, reject) => {
-      doc.on('end', () => resolve(pdfPath));
-      doc.on('error', reject);
-    });
+      return pdfBuffer;
+    
   }
 
   //! Servicio para eliminar un Acta por su ID
