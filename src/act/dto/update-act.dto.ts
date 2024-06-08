@@ -19,11 +19,7 @@ export class UpdateActDto extends PartialType(CreateActDto) {
 
     @IsString()
     @IsOptional()
-    tutor_name?: string;
-
-    @IsString()
-    @IsOptional()
-    tutor_lastname?: string;
+    tutor_names?: string;
 
     @IsString()
     @IsOptional()
@@ -36,10 +32,6 @@ export class UpdateActDto extends PartialType(CreateActDto) {
     @IsEmail()
     @IsOptional()
     tutor_email?: string;
-
-    @IsString()
-    @IsString()
-    tutor_address?: string;
 
     @IsString()
     @IsOptional()
