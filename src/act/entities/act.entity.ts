@@ -23,11 +23,8 @@ export class Act {
     @Column({name: 'bool_illiteracy', type: 'boolean', default: false})
     illiteracy: boolean;
 
-    @Column({name: 'str_tutor_name', type: 'varchar', length: 255, nullable: true})
-    tutor_name: string;
-
-    @Column({name: 'str_tutor_lastname', type: 'varchar', length: 255, nullable: true})
-    tutor_lastname: string;
+    @Column({name: 'str_tutor_names', type: 'varchar', length: 255, nullable: true})
+    tutor_names: string;
 
     @Column({name: 'str_tutor_ced', type: 'varchar', length: 10, nullable: true})
     tutor_ced: string;
@@ -37,9 +34,6 @@ export class Act {
 
     @Column({name: 'str_tutor_email', type: 'varchar', length: 255, nullable: true})
     tutor_email: string;
-
-    @Column({name: 'str_tutor_address', type: 'varchar', length: 255, nullable: true})
-    tutor_address: string;
 
     @Column({name: 'str_tutor_motive', type: 'varchar', length: 255, nullable: true})
     tutor_motive: string;
