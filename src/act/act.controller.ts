@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Res } from '@nestjs/common';
 import { ActService } from './act.service';
 import { CreateActDto } from './dto/create-act.dto';
 import { UpdateActDto } from './dto/update-act.dto';
+import { Response } from 'express';
 
 @Controller('act')
 export class ActController {
@@ -42,6 +44,14 @@ export class ActController {
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateActDto: UpdateActDto) {
     return this.actService.update(id, updateActDto);
+  }
+
+
+  //? Controlador para descargar un PDF de un Acta por su ID
+  @Get('/download/:id')
+  async downloadPDF(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
+    const pdfPath = await this.actService.generatePDF(id);
+    res.download(pdfPath);
   }
 
 
