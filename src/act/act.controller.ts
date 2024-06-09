@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Res } from '@nestjs/common';
 import { ActService } from './act.service';
 import { CreateActDto } from './dto/create-act.dto';
 import { UpdateActDto } from './dto/update-act.dto';
+import { Response } from 'express';
+import * as path from 'path'; // Importa el módulo path
 
 @Controller('act')
 export class ActController {
@@ -43,7 +46,19 @@ export class ActController {
   update(@Param('id', ParseIntPipe) id: number, @Body() updateActDto: UpdateActDto) {
     return this.actService.update(id, updateActDto);
   }
+  
+  @Get("pdf/:id")
+  async downloadPDF(@Param('id', ParseIntPipe) id: number, @Res() res): Promise<void> {
+    const buffer = await this.actService.generarPDF(id);
 
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename=acta-${id}.pdf`,
+      'Content-Length': buffer.length,
+    })
+
+    res.end(buffer);
+  }
 
 
   //? Controlaador para eliminar un Acta por su ID
