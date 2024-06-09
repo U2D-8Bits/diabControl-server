@@ -1,15 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber} from "class-validator";
 
 export class CreateFileDto {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
-
-    @IsString()
-    @IsNotEmpty()
-    path: string;
-
     @IsNumber()
     @IsNotEmpty()
     user_id: number;

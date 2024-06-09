@@ -1,34 +1,59 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prettier/prettier */
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { FileService } from './file.service';
-import { CreateFileDto } from './dto/create-file.dto';
 import { UpdateFileDto } from './dto/update-file.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+// import { diskStorage } from 'multer';
+// import { v4 as uuidv4 } from 'uuid';
+import { storage } from './storage.config';
+import { diskStorage } from 'multer';
+import { CreateFileDto } from './dto/create-file.dto';
+import { response } from 'express';
 
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post()
-  create(@Body() createFileDto: CreateFileDto) {
-    return this.fileService.create(createFileDto);
+  //? Controlador para subir archivos
+  @Post('upload/:iduser')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@Param('iduser') iduser: number, @UploadedFile() file: Express.Multer.File ){
+    return this.fileService.create(iduser, file);
   }
 
+
+
+
+  //? Comtrolador para obtener un archivo
+  @Get(':userId')
+  async getFile(@Param('userId') userId: number){
+    return this.fileService.getFileByUser(userId);
+  }
+
+
+  //? controlador para listar todos los archivos
   @Get()
   findAll() {
     return this.fileService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.fileService.findOne(+id);
-  }
 
+
+
+  //? Controlador para actualizar el archivo
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFileDto: UpdateFileDto) {
-    return this.fileService.update(+id, updateFileDto);
+  update(@Param('id') id: number, @Body() updateFileDto: UpdateFileDto) {
+    return this.fileService.update(id, updateFileDto);
   }
 
+
+
+
+  //? Controlador para eliminar el Archivo por su id
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.fileService.remove(id);
   }
 }
+

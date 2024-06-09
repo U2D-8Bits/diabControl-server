@@ -9,12 +9,12 @@ export class File {
     id: number;
 
     @Column({name: 'str_name_file', type: 'varchar', length: 255, nullable: false})
-    name: string;
+    filename: string;
 
     @Column({name: 'str_path_file', type: 'varchar', length: 255, nullable: false})
     path: string;
 
-    @OneToOne( () => User, user => user.file)
+    @OneToOne( () => User, user => user.file, {cascade: true})
     @JoinColumn()
     user: User;
 }

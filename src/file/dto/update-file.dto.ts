@@ -6,7 +6,7 @@ import { IsString, IsNumber, IsOptional } from 'class-validator';
 export class UpdateFileDto extends PartialType(CreateFileDto) {
     @IsString()
     @IsOptional()
-    name?: string;
+    filename?: string;
 
     @IsString()
     @IsOptional()
