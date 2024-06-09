@@ -11,6 +11,8 @@ import { FormsModule } from './forms/forms.module';
 import { HistoriesModule } from './histories/histories.module';
 import { ActModule } from './act/act.module';
 import { FileModule } from './file/file.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -25,6 +27,10 @@ import { FileModule } from './file/file.module';
       database: process.env.POSTGRES_DB,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'pdfs'), // Directorio donde se almacenan los archivos
+      serveRoot: '/pdfs', // Ruta base para servir los archivos estáticos
     }),
     RoleModule,
     UsersModule,

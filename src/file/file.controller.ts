@@ -26,9 +26,11 @@ export class FileController {
 
 
   //? Comtrolador para obtener un archivo
-  @Get(':userId')
+  @Get('uploaded/:userId')
   async getFile(@Param('userId') userId: number){
-    return this.fileService.getFileByUser(userId);
+    const file = await this.fileService.getFileByUser(userId);
+
+    return { url: `/pdfs/${file.filename}`};
   }
 
 
