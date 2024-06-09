@@ -30,7 +30,11 @@ export class FileController {
   async getFile(@Param('userId') userId: number){
     const file = await this.fileService.getFileByUser(userId);
 
-    return { url: `/pdfs/${file.filename}`};
+    //Retornamos la url del archivo y el id del archivo
+    return { 
+      url: `http://localhost:3000/pdfs/${file.filename}`,
+      id: file.id
+    };
   }
 
 
