@@ -10,6 +10,7 @@ import { InformsModule } from './informs/informs.module';
 import { FormsModule } from './forms/forms.module';
 import { HistoriesModule } from './histories/histories.module';
 import { ActModule } from './act/act.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ActModule } from './act/act.module';
     FormsModule,
     HistoriesModule,
     ActModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],

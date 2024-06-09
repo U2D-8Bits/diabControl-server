@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Act } from "src/act/entities/act.entity";
+import { File } from "src/file/entities/file.entity";
 import { Form } from "src/forms/entities/form.entity";
 import { History } from "src/histories/entities/history.entity";
 import { Inform } from "src/informs/entities/inform.entity";
@@ -64,6 +65,9 @@ export class User {
 
     @OneToOne( () => Act, act => act.user)
     act: Act
+
+    @OneToOne( () => File, file => file.user)
+    file: File
 
     @ManyToOne( () => Role, (role) => role.users, {onDelete: 'CASCADE'})
     role: Role
