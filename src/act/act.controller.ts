@@ -47,7 +47,7 @@ export class ActController {
     return this.actService.update(id, updateActDto);
   }
   
-  @Get("pdf/act/:id")
+  @Get("pdf/:id")
   async downloadPDF(@Param('id', ParseIntPipe) id: number, @Res() res): Promise<void> {
     const buffer = await this.actService.generarPDF(id);
 
