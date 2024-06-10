@@ -4,11 +4,12 @@ import { MedcategoriesService } from './medcategories.service';
 import { MedcategoriesController } from './medcategories.controller';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Medcategory } from './entities/medcategory.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({}),
-    TypeOrmModule.forFeature([]),
+    TypeOrmModule.forFeature([Medcategory]),
   ],
   controllers: [MedcategoriesController],
   providers: [MedcategoriesService],

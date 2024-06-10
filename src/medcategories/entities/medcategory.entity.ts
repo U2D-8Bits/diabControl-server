@@ -8,7 +8,7 @@ export class Medcategory {
     @PrimaryGeneratedColumn({name: 'int_id_med_category'})
     id: number;
 
-    @Column({name: 'str_name_med_category', type: 'varchar', length: 255, nullable: false})
+    @Column({name: 'str_name_med_category', type: 'varchar', length: 255, nullable: false, unique: true})
     name_category: string;
 
     @OneToMany( () => Medicine, medicine => medicine.category)

@@ -11,7 +11,7 @@ export class Medicine {
     @Column({name: 'str_comercial_name_medicine', type: 'varchar', length: 255, nullable: false})
     name_medicine: string;
 
-    @Column({name: 'str_generic_name_medicine', type: 'varchar', length: 255, nullable: false})
+    @Column({name: 'str_generic_name_medicine', type: 'varchar', length: 255, nullable: false, unique: true})
     generic_name: string;
 
     @ManyToOne( () => Medcategory, (category) => category.medicines )
