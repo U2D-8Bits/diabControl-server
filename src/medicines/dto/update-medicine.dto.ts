@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateMedicineDto } from './create-medicine.dto';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateMedicineDto extends PartialType(CreateMedicineDto) {
     @IsString()
@@ -13,6 +13,6 @@ export class UpdateMedicineDto extends PartialType(CreateMedicineDto) {
     generic_name?: string;
 
     @IsNumber()
-    @IsNotEmpty()
-    idCategory: number;
+    @IsOptional()
+    idCategory?: number;
 }
