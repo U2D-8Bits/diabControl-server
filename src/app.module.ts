@@ -13,6 +13,8 @@ import { ActModule } from './act/act.module';
 import { FileModule } from './file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { MedicinesModule } from './medicines/medicines.module';
+import { MedcategoriesModule } from './medcategories/medcategories.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { join } from 'path';
     HistoriesModule,
     ActModule,
     FileModule,
+    MedicinesModule,
+    MedcategoriesModule,
   ],
   controllers: [],
   providers: [],
