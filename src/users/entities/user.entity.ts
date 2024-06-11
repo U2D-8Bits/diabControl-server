@@ -1,9 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Act } from "src/act/entities/act.entity";
 import { File } from "src/file/entities/file.entity";
-import { Form } from "src/forms/entities/form.entity";
 import { History } from "src/histories/entities/history.entity";
-import { Inform } from "src/informs/entities/inform.entity";
 import { Role } from "src/role/entities/role.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -71,12 +69,6 @@ export class User {
 
     @ManyToOne( () => Role, (role) => role.users, {onDelete: 'CASCADE'})
     role: Role
-
-    @OneToMany( () => Inform, inform => inform.user)
-    informs: Inform[]
-
-    @OneToMany( () => Form, form => form.user )
-    forms: Form[]
 
     @OneToMany( ()=> History, history => history.medico)
     historiesCreated: History[]

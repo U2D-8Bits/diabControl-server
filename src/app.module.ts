@@ -6,8 +6,6 @@ import { RoleModule } from './role/role.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { InformsModule } from './informs/informs.module';
-import { FormsModule } from './forms/forms.module';
 import { HistoriesModule } from './histories/histories.module';
 import { ActModule } from './act/act.module';
 import { FileModule } from './file/file.module';
@@ -36,8 +34,6 @@ import { MedcategoriesModule } from './medcategories/medcategories.module';
     }),
     RoleModule,
     UsersModule,
-    InformsModule,
-    FormsModule,
     HistoriesModule,
     ActModule,
     FileModule,
