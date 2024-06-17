@@ -15,8 +15,9 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginResponse, JwtPayload } from './interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Role } from 'src/role/entities/role.entity';
+import { FindManyOptions, Like } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -207,6 +208,32 @@ export class UsersService {
     return this.userRepository.find();
   }
 
+
+
+
+    //! Metodo para listar usuarios con paginación y búsqueda
+    async findAllPacientesPaginated(page: number, limit: number, search: string) {
+      const options: FindManyOptions<User> = {
+        where: { role_id: 2 },
+        skip: (page - 1) * limit,
+        take: limit,
+      };
+  
+      if (search) {
+        options.where = [
+          { role_id: 2, user_name: ILike(`%${search}%`) },
+          { role_id: 2, user_lastname: ILike(`%${search}%`) },
+        ];
+      }
+  
+      const [users, total] = await this.userRepository.findAndCount(options);
+      return {
+        data: users,
+        total,
+        page,
+        limit,
+      };
+    }
 
 
 

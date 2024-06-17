@@ -13,6 +13,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, LoginDto } from './dto';
@@ -62,6 +63,19 @@ export class UsersController {
   findAll(@Request() req: Request) {
     return this.usersService.findAll();
   }
+
+
+
+    //! Ruta para listar los usuarios de rol paciente con paginación y búsqueda
+    @UseGuards(AuthGuard)
+    @Get('pacientes/paginated')
+    findAllPacientesPaginated(
+      @Query('page') page: number = 1,
+      @Query('limit') limit: number = 10,
+      @Query('search') search: string = ''
+    ) {
+      return this.userService.findAllPacientesPaginated(page, limit, search);
+    }
 
 
 
