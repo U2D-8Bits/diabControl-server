@@ -4,7 +4,7 @@ import { MedcategoriesService } from './medcategories.service';
 import { CreateMedcategoryDto } from './dto/create-medcategory.dto';
 import { UpdateMedcategoryDto } from './dto/update-medcategory.dto';
 
-@Controller('medcategories')
+@Controller('categories')
 export class MedcategoriesController {
   constructor(private readonly medcategoriesService: MedcategoriesService) {}
 
