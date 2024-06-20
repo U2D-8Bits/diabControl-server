@@ -46,7 +46,7 @@ export class MedicinesService {
   async findAll() {
     
     if( (await this.medicineRepository.find()).length === 0 ){
-      throw new HttpException('No hay medicamentos registrados', HttpStatus.NOT_FOUND)
+      throw new HttpException('No hay medicamentos registrados', HttpStatus.OK)
     }
 
     return await this.medicineRepository.find({

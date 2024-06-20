@@ -47,7 +47,7 @@ export class MedcategoriesService {
   async findAll() {
     
     if( (await this.medcategoryRepository.find()).length === 0 ){
-      throw new HttpException('No hay categorias de medicamentos', HttpStatus.NOT_FOUND)
+      throw new HttpException('No hay categorias de medicamentos', HttpStatus.OK)
     }
 
     return await this.medcategoryRepository.find()
