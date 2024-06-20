@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MedcategoriesService } from './medcategories.service';
 import { CreateMedcategoryDto } from './dto/create-medcategory.dto';
 import { UpdateMedcategoryDto } from './dto/update-medcategory.dto';
@@ -21,6 +21,15 @@ export class MedcategoriesController {
   @Get()
   findAll() {
     return this.medcategoriesService.findAll();
+  }
+
+  @Get('paginated')
+  findAllPaginated(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('search') search: string = ''
+  ){
+    return this.medcategoriesService.findAllCategoriesPaginated(page, limit, search)
   }
 
 
