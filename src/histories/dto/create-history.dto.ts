@@ -44,8 +44,7 @@ export class CreateHistoryDto {
     fisic_exam: string
 
     @IsNotEmpty()
-    @IsString()
-    recipe: string
+    recipe: string[]
 
     @IsNotEmpty()
     @IsString()

@@ -56,6 +56,12 @@ export class MedicinesService {
   }
 
 
+  //! Servicio para mandar la cantidad de medicamentos registrados
+  async countMedicines(){
+    return await this.medicineRepository.count()
+  }
+
+
 
   //! Servicio para listar todos los medicamentos con paginación y busqueda
   async findAllMedicinesPaginated(page: number, limit: number, search: string){

@@ -54,6 +54,11 @@ export class MedcategoriesService {
 
   }
 
+    //! Servicio para mandar la cantidad de categorias de medicamentos registrados
+    async countCategories(){
+      return await this.medcategoryRepository.count()
+    }
+
 
   //! Método para listar todas las categorias con paginación y busqueda
   async findAllCategoriesPaginated(page: number, limit: number, search: string){

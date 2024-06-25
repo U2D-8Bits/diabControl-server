@@ -23,6 +23,12 @@ export class MedcategoriesController {
     return this.medcategoriesService.findAll();
   }
 
+    //? Controlador para mandar la cantidad de categorias de medicamentos registrados
+    @Get('count')
+    countCategoryMedicines(){
+      return this.medcategoriesService.countCategories()
+    }
+
   @Get('paginated')
   findAllPaginated(
     @Query('page') page: number = 1,

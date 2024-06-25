@@ -22,6 +22,14 @@ export class MedicinesController {
     return this.medicinesService.findAll();
   }
 
+
+  //? Controlador para mandar la cantidad de medicamentos registrados
+  @Get('count')
+  countMedicines(){
+    return this.medicinesService.countMedicines()
+  }
+
+
   //? Controlador para listar todos los medicamentos con paginación y busqueda
   @Get('paginated')
   findAllPaginated(
