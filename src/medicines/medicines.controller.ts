@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { MedicinesService } from './medicines.service';
 import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { UpdateMedicineDto } from './dto/update-medicine.dto';
@@ -22,6 +22,23 @@ export class MedicinesController {
     return this.medicinesService.findAll();
   }
 
+
+  //? Controlador para mandar la cantidad de medicamentos registrados
+  @Get('count')
+  countMedicines(){
+    return this.medicinesService.countMedicines()
+  }
+
+
+  //? Controlador para listar todos los medicamentos con paginación y busqueda
+  @Get('paginated')
+  findAllPaginated(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10, 
+    @Query('search') search: string = ''
+  ){
+    return this.medicinesService.findAllMedicinesPaginated(page, limit, search)
+  }
 
 
   //? Controlador para buscar un medicamento por su id

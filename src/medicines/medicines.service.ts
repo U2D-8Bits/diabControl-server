@@ -5,7 +5,7 @@ import { CreateMedicineDto } from './dto/create-medicine.dto';
 import { UpdateMedicineDto } from './dto/update-medicine.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Medicine } from './entities/medicine.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, ILike, Repository } from 'typeorm';
 import { Medcategory } from 'src/medcategories/entities/medcategory.entity';
 
 @Injectable()
@@ -46,12 +46,46 @@ export class MedicinesService {
   async findAll() {
     
     if( (await this.medicineRepository.find()).length === 0 ){
-      throw new HttpException('No hay medicamentos registrados', HttpStatus.NOT_FOUND)
+      throw new HttpException('No hay medicamentos registrados', HttpStatus.OK)
     }
 
     return await this.medicineRepository.find({
       relations: ['category']
     })
+
+  }
+
+
+  //! Servicio para mandar la cantidad de medicamentos registrados
+  async countMedicines(){
+    return await this.medicineRepository.count()
+  }
+
+
+
+  //! Servicio para listar todos los medicamentos con paginación y busqueda
+  async findAllMedicinesPaginated(page: number, limit: number, search: string){
+    
+    const options: FindManyOptions<Medicine> = {
+      skip: (page - 1) * limit,
+      take: limit,
+      relations: ['category']
+    }
+
+    if(search){
+      options.where = [
+        {name_medicine: ILike(`%${search}%`)},
+        { category: {name_category: ILike(`%${search}%`)} }
+      ]
+    }
+
+    const [medicines, total] = await this.medicineRepository.findAndCount(options)
+    return {
+      data: medicines,
+      total,
+      page,
+      limit
+    }
 
   }
 
