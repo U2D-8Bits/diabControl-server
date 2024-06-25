@@ -5,7 +5,7 @@ import { CreateHistoryDto } from './dto/create-history.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { History } from './entities/history.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
@@ -97,6 +97,45 @@ export class HistoriesService {
 
     //* Retornamos todas las historias clinicas del paciente
     return historiesFounded
+  }
+
+
+  //! Servicio para listar todas las historias clínicas de un paciente por su id y con paginación
+  async findAllByPacienteIdAndPagination(id: number, page: number, limit: number) {
+    
+    //* Buscamos el paciente por su id
+    const userPaciente = await this.userRepository.findOne({
+      where: {id_user: id}
+    });
+
+    //* Verificamos que el paciente exista
+    if( !userPaciente){
+      throw new HttpException('El paciente no existe', HttpStatus.NOT_FOUND);
+    }
+
+    //* Buscamos los historiales por el id del paciente
+    const options: FindManyOptions<History> = {
+      where: {paciente: { id_user: id }},
+      skip: (page - 1) * limit,
+      take: limit,
+      relations: ['medico', 'paciente']
+    }
+
+    //* Buscamos los historiales del paciente
+    const [historiesFounded, total] = await this.historyRepository.findAndCount(options);
+
+    //* Verificamos que existan historiales clinicos
+    if( historiesFounded.length === 0){
+      return 'El paciente no tiene historias clinicas';
+    }
+
+    //* Retornamos las historias clinicas del paciente con paginación
+    return {
+      data: historiesFounded,
+      total,
+      page,
+      limit
+    }
   }
 
 

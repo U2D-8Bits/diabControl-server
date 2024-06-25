@@ -44,8 +44,7 @@ export class UpdateHistoryDto extends PartialType(CreateHistoryDto) {
     fisic_exam?: string
 
     @IsOptional()
-    @IsString()
-    recipe?: string
+    recipe?: string[]
 
     @IsOptional()
     @IsString()

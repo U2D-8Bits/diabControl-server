@@ -5,7 +5,7 @@ import { CreateMedcategoryDto } from './dto/create-medcategory.dto';
 import { UpdateMedcategoryDto } from './dto/update-medcategory.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Medcategory } from './entities/medcategory.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, ILike, Repository } from 'typeorm';
 
 @Injectable()
 export class MedcategoriesService {
@@ -47,11 +47,40 @@ export class MedcategoriesService {
   async findAll() {
     
     if( (await this.medcategoryRepository.find()).length === 0 ){
-      throw new HttpException('No hay categorias de medicamentos', HttpStatus.NOT_FOUND)
+      throw new HttpException('No hay categorias de medicamentos', HttpStatus.OK)
     }
 
     return await this.medcategoryRepository.find()
 
+  }
+
+    //! Servicio para mandar la cantidad de categorias de medicamentos registrados
+    async countCategories(){
+      return await this.medcategoryRepository.count()
+    }
+
+
+  //! Método para listar todas las categorias con paginación y busqueda
+  async findAllCategoriesPaginated(page: number, limit: number, search: string){
+
+    const options: FindManyOptions<Medcategory> = {
+      skip: (page - 1) * limit,
+      take: limit,
+    }
+
+    if(search){
+      options.where = [
+        {name_category: ILike(`%${search}%`)}
+      ]
+    }
+
+    const [categories, total] = await this.medcategoryRepository.findAndCount(options)
+    return {
+      data: categories,
+      total,
+      page,
+      limit
+    }
   }
 
 

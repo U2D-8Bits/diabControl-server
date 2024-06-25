@@ -33,7 +33,7 @@ export class History {
     fisic_exam: string
 
     @Column({name: 'str_recipe', type: 'varchar', length: 255, nullable: false})
-    recipe: string
+    recipe: string[]
 
     @Column({name: 'str_current_illness', type: 'varchar', length: 255, nullable: false})
     current_illness: string

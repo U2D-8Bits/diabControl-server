@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { HistoriesService } from './histories.service';
 import { CreateHistoryDto } from './dto/create-history.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
@@ -27,6 +27,17 @@ export class HistoriesController {
   @Get('/paciente/:id')
   findAllByPacienteId(@Param('id', ParseIntPipe) id: number){
     return this.historiesService.findAllByPacienteId(id);
+  }
+
+
+  //? Controlador para listar todas las historias clínicas de un paciente por su id con paginación
+  @Get('/paciente/:id/paginated')
+  findAllPaginated(
+    @Param('id') id: number,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ){
+    return this.historiesService.findAllByPacienteIdAndPagination(id, page, limit)
   }
 
   //? Controlador para listar una historia clinica por su id
