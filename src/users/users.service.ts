@@ -33,15 +33,19 @@ export class UsersService {
 
   //! Ruta para crear un usuario medico automaticamente con administrador activo
   async createMedicUser() {
+
+    const rolename: string = 'Médico';
+
+
     //? Buscamos si existe un rol con el nombre de medico
     const roleExist = await this.roleRepository.findOne({
-      where: { role_name: 'medico' },
+      where: { role_name: rolename },
     });
 
     //? Si no existe el rol de medico lanzamos un error
     if (!roleExist) {
       throw new HttpException(
-        'Rol de medico no encontrado',
+        'Rol de médico no encontrado',
         HttpStatus.NOT_FOUND,
       );
     }
@@ -63,7 +67,7 @@ export class UsersService {
     const newUser = this.userRepository.create({
       user_name: 'Wilmer',
       user_lastname: 'Oviedo Barros',
-      user_username: 'medicoAdmin',
+      user_username: 'AdminMedico',
       user_password: 'admin123456',
       user_email: 'wilmer@gmail.com',
       user_phone: '0959587864',
