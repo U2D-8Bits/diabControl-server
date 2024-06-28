@@ -48,6 +48,10 @@ export class UpdateHistoryDto extends PartialType(CreateHistoryDto) {
 
     @IsOptional()
     @IsString()
+    fenotype?: string
+
+    @IsOptional()
+    @IsString()
     current_illness?: string
 
     @IsOptional()
