@@ -32,8 +32,11 @@ export class History {
     @Column({name: 'str_fisic_exam', type: 'varchar', length: 255, nullable: false})
     fisic_exam: string
 
-    @Column({name: 'str_recipe', type: 'varchar', length: 255, nullable: false})
-    recipe: string[]
+    @Column("simple-array", {name: 'str_recipe', nullable: false})
+    recipe: string[];
+
+    @Column({name: 'str_fenotype', type: 'varchar', length: 255, nullable: false})
+    fenotype: string;
 
     @Column({name: 'str_current_illness', type: 'varchar', length: 255, nullable: false})
     current_illness: string

@@ -28,7 +28,7 @@ export class MedcategoriesService {
     })
 
     //* Si la categoria ya existe, lanzamos un error
-    if( newCategory){
+    if( newCategory ){
       throw new HttpException('Esta categoria ya existe', HttpStatus.BAD_REQUEST)
     }
 
@@ -121,21 +121,26 @@ export class MedcategoriesService {
 
   //! Servicio para actualizar una categoria
   async update(id: number, updateMedcategoryDto: UpdateMedcategoryDto) {
-    
-    //* Buscamos la categoria en base al id
+
+    //* Verificamos directamento con un if que el id sea de una categoria existente
+    if( !(await this.medcategoryRepository.findOne({where: {id}})) ){
+      throw new HttpException('Esta categoria no existe', HttpStatus.NOT_FOUND)
+    }
+
     const category = await this.medcategoryRepository.findOne({
-      where: {id}
+      where: {name_category: updateMedcategoryDto.name_category}
     })
 
-    //* Si la categoria no existe, lanzamos un error
-    if( !category){
-      throw new HttpException('Esta categoria no existe', HttpStatus.NOT_FOUND)
+    //* Si la categoria ya existe, lanzamos un error
+    if( category ){
+      throw new HttpException('Esta categoria ya existe', HttpStatus.BAD_REQUEST)
     }
 
 
     //* Actualizamos la categoria y retornamos la categoria actualizada
     Object.assign(category, updateMedcategoryDto)
     return await this.medcategoryRepository.save(category)
+
 
   }
 
