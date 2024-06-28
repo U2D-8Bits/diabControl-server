@@ -31,6 +31,15 @@ export class MedicinesService {
       throw new HttpException('La categoria no existe', HttpStatus.BAD_REQUEST)
     }
 
+    //Verificamos que el nombre generico del medicamento no exista
+    const medicineExist = await this.medicineRepository.findOne({
+      where: {generic_name: medData.generic_name}
+    })
+
+    if( medicineExist ){
+      throw new HttpException('Ya existe un medicamento asociado a ese nombre genérico', HttpStatus.BAD_REQUEST)
+    }
+
     const medicine = this.medicineRepository.create({
       ...medData,
       category: category
@@ -129,6 +138,15 @@ export class MedicinesService {
 
     if( !medicine ){
       throw new HttpException('El medicamento no existe', HttpStatus.NOT_FOUND)
+    }
+
+    //Verificamos que el nombre generico del medicamento no exista
+    const medicineExist = await this.medicineRepository.findOne({
+      where: {generic_name: medData.generic_name}
+    })
+
+    if( medicineExist && medicineExist.id !== id ){
+      throw new HttpException('Ya existe un medicamento asociado a ese nombre genérico', HttpStatus.BAD_REQUEST)
     }
 
     this.medicineRepository.merge(medicine, {

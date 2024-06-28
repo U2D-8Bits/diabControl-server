@@ -48,6 +48,10 @@ export class CreateHistoryDto {
 
     @IsNotEmpty()
     @IsString()
+    fenotype: string
+
+    @IsNotEmpty()
+    @IsString()
     current_illness: string
 
     @IsNotEmpty()
