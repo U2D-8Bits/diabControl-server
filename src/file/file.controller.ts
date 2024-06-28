@@ -32,7 +32,8 @@ export class FileController {
 
     //Retornamos la url del archivo y el id del archivo
     return { 
-      url: `http://localhost:3000/pdfs/${file.filename}`,
+      // url: `http://localhost:3000/pdfs/${file.filename}`,
+      url: `https://diabcontrol-production.up.railway.app/pdfs/${file.filename}`,
       id: file.id
     };
   }
