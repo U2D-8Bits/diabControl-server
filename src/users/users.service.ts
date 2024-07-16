@@ -269,6 +269,24 @@ export class UsersService {
   }
 
 
+  //! Metodo para buscar un usuario por username
+  async findByUsername(username: string) {
+
+    //? Buscamos el usuario por username
+    const userFound = await this.userRepository.findOne({
+      where: { user_username: username },
+      relations: ['role'],
+    });
+
+    //? Si no existe el usuario lanzamos un error
+    if (!userFound) {
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    //? Retornamos el usuario
+    return userFound;
+
+  }
 
 
 
