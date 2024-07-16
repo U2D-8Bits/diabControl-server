@@ -20,33 +20,40 @@ export class MedicinesService {
 
   //! Servicio para crear un nuevo medicamento
   async create(createMedicineDto: CreateMedicineDto) {
-    
-    const {idCategory, ...medData} = createMedicineDto;
+    //* Función para normalizar el texto
+    const normalizeText = (text: string): string => {
+      return text.toLowerCase();
+    };
+
+    const { idCategory, ...medData } = createMedicineDto;
 
     const category = await this.medCategoryRepo.findOne({
-      where: {id: idCategory}
-    })
+      where: { id: idCategory },
+    });
 
-    if( !category ){
-      throw new HttpException('La categoria no existe', HttpStatus.BAD_REQUEST)
+    if (!category) {
+      throw new HttpException('La categoría no existe', HttpStatus.BAD_REQUEST);
     }
 
-    //Verificamos que el nombre generico del medicamento no exista
-    const medicineExist = await this.medicineRepository.findOne({
-      where: {generic_name: medData.generic_name}
-    })
+    //* Normalizamos el nombre genérico del medicamento
+    const normalizedGenericName = normalizeText(medData.generic_name);
 
-    if( medicineExist ){
-      throw new HttpException('Ya existe un medicamento asociado a ese nombre genérico', HttpStatus.BAD_REQUEST)
+    // Verificamos que el nombre genérico del medicamento no exista
+    const medicineExist = await this.medicineRepository.findOne({
+      where: { generic_name: normalizedGenericName },
+    });
+
+    if (medicineExist) {
+      throw new HttpException('Ya existe un medicamento asociado a ese nombre genérico', HttpStatus.BAD_REQUEST);
     }
 
     const medicine = this.medicineRepository.create({
       ...medData,
-      category: category
-    })
+      generic_name: normalizedGenericName,
+      category: category,
+    });
 
-    return await this.medicineRepository.save(medicine)
-
+    return await this.medicineRepository.save(medicine);
   }
 
 
@@ -121,42 +128,48 @@ export class MedicinesService {
 
   //! Servicio para actualizar un medicamento por su id
   async update(id: number, updateMedicineDto: UpdateMedicineDto) {
-    
-    const {idCategory, ...medData} = updateMedicineDto;
+    //* Función para normalizar el texto
+    const normalizeText = (text: string): string => {
+      return text.toLowerCase();
+    };
+
+    const { idCategory, ...medData } = updateMedicineDto;
 
     const category = await this.medCategoryRepo.findOne({
-      where: {id: idCategory}
-    })
+      where: { id: idCategory },
+    });
 
-    if( !category ){
-      throw new HttpException('La categoria no existe', HttpStatus.BAD_REQUEST)
+    if (!category) {
+      throw new HttpException('La categoría no existe', HttpStatus.BAD_REQUEST);
     }
 
     const medicine = await this.medicineRepository.findOne({
-      where: {id: id}
-    })
+      where: { id: id },
+    });
 
-    if( !medicine ){
-      throw new HttpException('El medicamento no existe', HttpStatus.NOT_FOUND)
+    if (!medicine) {
+      throw new HttpException('El medicamento no existe', HttpStatus.NOT_FOUND);
     }
 
-    //Verificamos que el nombre generico del medicamento no exista
-    const medicineExist = await this.medicineRepository.findOne({
-      where: {generic_name: medData.generic_name}
-    })
+    //* Normalizamos el nombre genérico del medicamento
+    const normalizedGenericName = normalizeText(medData.generic_name);
 
-    if( medicineExist && medicineExist.id !== id ){
-      throw new HttpException('Ya existe un medicamento asociado a ese nombre genérico', HttpStatus.BAD_REQUEST)
+    // Verificamos que el nombre genérico del medicamento no exista
+    const medicineExist = await this.medicineRepository.findOne({
+      where: { generic_name: normalizedGenericName },
+    });
+
+    if (medicineExist && medicineExist.id !== id) {
+      throw new HttpException('Ya existe un medicamento asociado a ese nombre genérico', HttpStatus.BAD_REQUEST);
     }
 
     this.medicineRepository.merge(medicine, {
       ...medData,
-      category: category
-    })
+      generic_name: normalizedGenericName,
+      category: category,
+    });
 
-    Object.assign(medicine, updateMedicineDto)
-    this.medicineRepository.save(medicine)
-
+    return await this.medicineRepository.save(medicine);
   }
 
 

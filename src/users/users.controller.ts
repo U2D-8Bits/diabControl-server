@@ -21,6 +21,7 @@ import { AuthGuard } from './guards/auth/auth.guard';
 import { User } from './entities/user.entity';
 import { LoginResponse } from './interfaces';
 import { TokenGuard } from './guards/auth/token.guard';
+import { LoginGuard } from './guards/auth/login.guard';
 
 @Controller('users')
 export class UsersController {
@@ -48,6 +49,7 @@ export class UsersController {
 
 
   //! Ruta para loguear un usuario
+  @UseGuards(LoginGuard)
   @Post('/login')
   loginUser(@Body() loginDto: LoginDto) {
     return this.usersService.loginUser(loginDto);

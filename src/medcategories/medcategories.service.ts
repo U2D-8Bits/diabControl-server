@@ -19,27 +19,30 @@ export class MedcategoriesService {
 
 
 
-  //! Servicio para crea una nueva categoria de medicamento
-  async create(createMedcategoryDto: CreateMedcategoryDto) {
-    
-    //* Buscamos la categoria en base al nombre
-    const newCategory = await this.medcategoryRepository.findOne({
-      where: {name_category: createMedcategoryDto.name_category}
-    })
+ //! Servicio para crear una nueva categoría de medicamento
+ async create(createMedcategoryDto: CreateMedcategoryDto) {
+  //* Convertimos el nombre de la categoría a minúsculas
+  const normalizedCategoryName = createMedcategoryDto.name_category.toLowerCase();
 
-    //* Si la categoria ya existe, lanzamos un error
-    if( newCategory ){
-      throw new HttpException('Esta categoria ya existe', HttpStatus.BAD_REQUEST)
-    }
+  //* Verificamos si la categoría ya existe
+  const existingCategory = await this.medcategoryRepository.findOne({
+    where: { name_category: normalizedCategoryName },
+  });
 
-    //* Creamos la nueva categoria en caso de que no exista
-    const category = this.medcategoryRepository.create(createMedcategoryDto)
-
-
-    //* Guardamos la categoria en la base de datos
-    return await this.medcategoryRepository.save(category)
-
+  //* Si la categoría ya existe, lanzamos un error
+  if (existingCategory) {
+    throw new HttpException('Esta categoría ya existe', HttpStatus.BAD_REQUEST);
   }
+
+  //* Creamos la nueva categoría con el nombre normalizado
+  const category = this.medcategoryRepository.create({
+    ...createMedcategoryDto,
+    name_category: normalizedCategoryName,
+  });
+
+  //* Guardamos la categoría en la base de datos
+  return await this.medcategoryRepository.save(category);
+}
 
 
 
@@ -121,27 +124,37 @@ export class MedcategoriesService {
 
   //! Servicio para actualizar una categoria
   async update(id: number, updateMedcategoryDto: UpdateMedcategoryDto) {
+    //* Función para normalizar el texto
+    const normalizeText = (text: string): string => {
+      return text.toLowerCase();
+    };
 
-    //* Verificamos directamento con un if que el id sea de una categoria existente
-    if( !(await this.medcategoryRepository.findOne({where: {id}})) ){
-      throw new HttpException('Esta categoria no existe', HttpStatus.NOT_FOUND)
+    //* Verificamos directamente con un if que el id sea de una categoría existente
+    const existingCategoryById = await this.medcategoryRepository.findOne({ where: { id } });
+    if (!existingCategoryById) {
+      throw new HttpException('Esta categoría no existe', HttpStatus.NOT_FOUND);
     }
 
-    const category = await this.medcategoryRepository.findOne({
-      where: {name_category: updateMedcategoryDto.name_category}
-    })
+    //* Normalizamos el nombre de la categoría
+    const normalizedCategoryName = normalizeText(updateMedcategoryDto.name_category);
 
-    //* Si la categoria ya existe, lanzamos un error
-    if( category ){
-      throw new HttpException('Esta categoria ya existe', HttpStatus.BAD_REQUEST)
+    //* Verificamos si la categoría con el nombre normalizado ya existe
+    const existingCategoryByName = await this.medcategoryRepository.findOne({
+      where: { name_category: normalizedCategoryName },
+    });
+
+    //* Si la categoría ya existe y es diferente de la que estamos actualizando, lanzamos un error
+    if (existingCategoryByName && existingCategoryByName.id !== id) {
+      throw new HttpException('Esta categoría ya existe', HttpStatus.BAD_REQUEST);
     }
 
+    //* Actualizamos la categoría y retornamos la categoría actualizada
+    Object.assign(existingCategoryById, {
+      ...updateMedcategoryDto,
+      name_category: normalizedCategoryName,
+    });
 
-    //* Actualizamos la categoria y retornamos la categoria actualizada
-    Object.assign(category, updateMedcategoryDto)
-    return await this.medcategoryRepository.save(category)
-
-
+    return await this.medcategoryRepository.save(existingCategoryById);
   }
 
 
