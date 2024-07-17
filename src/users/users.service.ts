@@ -360,6 +360,63 @@ export class UsersService {
     return updatedUser;
   }
 
+  //! Metodo para actualizar un perfil por id
+  async updateProfile(id: number, updateUserDto: UpdateUserDto) {
+    //? Buscamos el usuario por id
+    const userFound = await this.userRepository.findOne({
+      where: { id_user: id },
+    });
+
+    //? Si no existe el usuario lanzamos un error
+    if (!userFound) {
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    }
+
+    //? Validamos que el username, email, cedula y telefono no existan en otro usuario pero si es del mismo usuario no lanzamos error
+    if (
+      updateUserDto.user_username ||
+      updateUserDto.user_email ||
+      updateUserDto.user_ced ||
+      updateUserDto.user_phone
+    ) {
+      const userFounded = await this.userRepository.findOne({
+        where: [
+          { user_username: updateUserDto.user_username },
+          { user_email: updateUserDto.user_email },
+          { user_ced: updateUserDto.user_ced },
+          { user_phone: updateUserDto.user_phone },
+        ],
+      });
+
+      //? Si el username, email, cedula o telefono ya existen lanzamos un error
+      switch (true) {
+        case userFounded?.user_username === updateUserDto.user_username &&
+          userFounded?.id_user !== userFound.id_user:
+          throw new HttpException(
+            'Nombre de usuario ya existe',
+            HttpStatus.BAD_REQUEST,
+          );
+        case userFounded?.user_email === updateUserDto.user_email &&
+          userFounded?.id_user !== userFound.id_user:
+          throw new HttpException('Email ya existe', HttpStatus.BAD_REQUEST);
+        case userFounded?.user_ced === updateUserDto.user_ced &&
+          userFounded?.id_user !== userFound.id_user:
+          throw new HttpException('Cedula ya existe', HttpStatus.BAD_REQUEST);
+        case userFounded?.user_phone === updateUserDto.user_phone &&
+          userFounded?.id_user !== userFound.id_user:
+          throw new HttpException('Telefono ya existe', HttpStatus.BAD_REQUEST);
+      }
+    }
+
+    //? Actualizamos el usuario
+    const updatedUser = Object.assign(userFound, updateUserDto);
+    await this.userRepository.save(updatedUser);
+
+    //? Retornamos el usuario actualizado
+    return
+
+  }
+
   //! Metodo para cambiar el status de un usuario por id
   async changeStatus(id: number) {
     //? Buscamos el usuario por id
