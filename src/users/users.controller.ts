@@ -148,6 +148,14 @@ export class UsersController {
   }
 
 
+  //! Ruta para actualizar el perfil de un usuario
+  @Patch(':id/profile')
+  updateProfile(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ){
+    return this.userService.updateProfile(id, updateUserDto);
+  }
 
 
 
