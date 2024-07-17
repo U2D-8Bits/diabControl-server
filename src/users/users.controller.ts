@@ -22,6 +22,7 @@ import { User } from './entities/user.entity';
 import { LoginResponse } from './interfaces';
 import { TokenGuard } from './guards/auth/token.guard';
 import { LoginGuard } from './guards/auth/login.guard';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('users')
 export class UsersController {
@@ -55,6 +56,13 @@ export class UsersController {
     return this.usersService.loginUser(loginDto);
   }
 
+
+
+  //! Ruta para restablecer contrasena
+  @Post('/reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<void>{
+    await this.userService.resetPassword(resetPasswordDto);
+  }
 
 
 
