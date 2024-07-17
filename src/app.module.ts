@@ -13,6 +13,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { MedicinesModule } from './medicines/medicines.module';
 import { MedcategoriesModule } from './medcategories/medcategories.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -31,6 +32,20 @@ import { MedcategoriesModule } from './medcategories/medcategories.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'pdfs'), // Directorio donde se almacenan los archivos
       serveRoot: '/pdfs', // Ruta base para servir los archivos estáticos
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.EMAIL_HOST,
+        port: Number(process.env.EMAIL_PORT),
+        secure: false, // upgrade later with STARTTLS
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      },
+      defaults: {
+        from: '"nest-modules" <process.env.EMAIL_USER>',
+      },
     }),
     RoleModule,
     UsersModule,
