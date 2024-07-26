@@ -89,11 +89,15 @@ export class UsersController {
 
 
 
-  //! Ruta para listar todos los usuarios de rol medico
+  //! Ruta para listar todos los usuarios de rol medico con paginación y búsqueda
   @UseGuards(TokenGuard)
   @Get('medics')
-  findAllUsers(@Request() req: Request) {
-    return this.usersService.findAllMedicos();
+  findAllMedicsPaginated(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('search') search: string = ''
+  ) {
+    return this.userService.findAllMedicsPaginated(page, limit, search);
   }
 
 

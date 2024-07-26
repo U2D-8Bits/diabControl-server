@@ -63,7 +63,7 @@ export class UsersService {
 
     //? Creamos un nuevo usuario
     const newUser = this.userRepository.create({
-      user_name: 'Wilmer',
+      user_name: 'Wilmer Alexander',
       user_lastname: 'Oviedo Barros',
       user_username: 'AdminMedico',
       user_password: 'admin123456',
@@ -72,7 +72,7 @@ export class UsersService {
       user_address: 'Santo Domingo',
       user_birthdate: '1999-10-10',
       user_genre: 'Masculino',
-      user_ced: '1725412365',
+      user_ced: '0911336998',
       user_age: 40,
       user_admin: true,
       user_status: true,
@@ -152,6 +152,9 @@ export class UsersService {
     return user;
   }
 
+
+
+
   //! Metodo para loguear un usuario
   async loginUser(loginDto: LoginDto): Promise<any> {
     //? Buscamos el usuario por username
@@ -198,7 +201,7 @@ export class UsersService {
     return this.userRepository.find();
   }
 
-  //! Metodo para listar usuarios con paginación y búsqueda
+  //! Metodo para listar usuarios pacientes con paginación y búsqueda
   async findAllPacientesPaginated(page: number, limit: number, search: string) {
     const options: FindManyOptions<User> = {
       where: { role_id: 2 },
@@ -221,6 +224,34 @@ export class UsersService {
       limit,
     };
   }
+
+
+  //! Metodo para listar usuarios con rol de Médico con paginación y busqueda
+  async findAllMedicsPaginated(page: number, limit: number, search: string) {
+    const options: FindManyOptions<User> = {
+      where: { role_id: 1 },
+      skip: (page - 1) * limit,
+      take: limit,
+    };
+
+    if (search) {
+      options.where = [
+        { role_id: 1, user_name: ILike(`%${search}%`) },
+        { role_id: 1, user_lastname: ILike(`%${search}%`) },
+      ];
+    }
+
+    const [users, total] = await this.userRepository.findAndCount(options);
+    return {
+      data: users,
+      total,
+      page,
+      limit,
+    };
+  }
+
+
+
 
   //! Metodo para listar todos los usuarios de rol paciente
   async findAllPacientes() {
