@@ -79,7 +79,7 @@ export class ControlService {
     });
 
     if (total === 0) {
-      return 'El paciente no tiene registrados controles';
+      throw new HttpException('El paciente no tiene registrados controles actualmente', HttpStatus.NOT_FOUND);
     }
 
     return {
@@ -135,5 +135,34 @@ export class ControlService {
     }
 
     return await this.controlRepository.remove(control);
+  }
+
+
+  //? Servicio para obtener todos los controles de un paciente por su id y solo tener los datos de los signos vitales de las historias clínicas
+  async getSignalsByPatientId(patientId: number) {
+    const controls = await this.controlRepository.find({
+      where: {paciente: {id_user: patientId}},
+      select: ['history'],
+      relations: ['history']
+    });
+
+    if (controls.length === 0) {
+      throw new HttpException('El paciente no tiene registrados controles actualmente', HttpStatus.NOT_FOUND);
+    }
+
+    const historiesFounded = this.historyRepository.find({
+      where: {paciente: {id_user: patientId}},
+      select: ['weight_patient', 'pulse_patient', 'presure_patient', 'frequency_patient', 'temperature_patient', 'created_at'],
+    })
+
+    return (await historiesFounded).map(history => ({
+      weight: history.weight_patient,
+      pulse: history.pulse_patient,
+      pressure: history.presure_patient,
+      frequency: history.frequency_patient,
+      temperature: history.temperature_patient,
+      date: history.created_at,
+    }));
+
   }
 }

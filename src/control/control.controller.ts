@@ -23,17 +23,24 @@ export class ControlController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.controlService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.controlService.findOne(id);
+  }
+
+  @Get('reports/:id')
+  getSignalsByIdPatient(
+    @Param('id') id: number
+  ){
+    return this.controlService.getSignalsByPatientId(id)
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateControlDto: UpdateControlDto) {
-    return this.controlService.update(+id, updateControlDto);
+  update(@Param('id') id: number, @Body() updateControlDto: UpdateControlDto) {
+    return this.controlService.update(id, updateControlDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.controlService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.controlService.remove(id);
   }
 }
