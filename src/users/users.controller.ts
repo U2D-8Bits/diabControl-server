@@ -91,7 +91,7 @@ export class UsersController {
 
   //! Ruta para listar todos los usuarios de rol medico con paginación y búsqueda
   @UseGuards(TokenGuard)
-  @Get('medics')
+  @Get('medics/paginated')
   findAllMedicsPaginated(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
