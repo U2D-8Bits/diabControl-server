@@ -14,6 +14,7 @@ import { join } from 'path';
 import { MedicinesModule } from './medicines/medicines.module';
 import { MedcategoriesModule } from './medcategories/medcategories.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ControlModule } from './control/control.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     FileModule,
     MedicinesModule,
     MedcategoriesModule,
+    ControlModule,
   ],
   controllers: [],
   providers: [],

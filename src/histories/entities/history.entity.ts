@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
+import { Control } from "src/control/entities/control.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({name: 'tb_medic_history'})
 export class History {
@@ -59,5 +60,8 @@ export class History {
 
     @ManyToOne( () => User, user => user.historiesRecived)
     paciente: User
+
+   @OneToOne( () => Control, control => control.history)
+   control: Control
 
 }

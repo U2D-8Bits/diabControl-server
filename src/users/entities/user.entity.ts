@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Act } from "src/act/entities/act.entity";
+import { Control } from "src/control/entities/control.entity";
 import { File } from "src/file/entities/file.entity";
 import { History } from "src/histories/entities/history.entity";
 import { Role } from "src/role/entities/role.entity";
@@ -75,5 +76,11 @@ export class User {
 
     @OneToMany( ()=> History, history => history.paciente)
     historiesRecived: History[]
+
+    @OneToMany(() => Control, control => control.paciente)
+    controlsRecived: Control[];
+  
+    @OneToMany(() => Control, control => control.medico)
+    controlsCreated: Control[];
 
 }
