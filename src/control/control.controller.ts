@@ -34,6 +34,13 @@ export class ControlController {
     return this.controlService.getSignalsByPatientId(id)
   }
 
+  @Get('asociated/:id')
+  verifyAsociated(
+    @Param('id') id: number,
+  ){
+    return this.controlService.checkControlByHistoryId(id)
+  }
+
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateControlDto: UpdateControlDto) {
     return this.controlService.update(id, updateControlDto);

@@ -33,7 +33,7 @@ export class ControlService {
     });
 
     if (!patient) {
-      throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Paciente no encontrado', HttpStatus.NOT_FOUND);
     }
 
     const medic = await this.userRepository.findOne({
@@ -41,7 +41,7 @@ export class ControlService {
     });
 
     if (!medic) {
-      throw new HttpException('Medic not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Médico no encontrado', HttpStatus.NOT_FOUND);
     }
 
     const history = await this.historyRepository.findOne({
@@ -49,7 +49,7 @@ export class ControlService {
     });
 
     if (!history) {
-      throw new HttpException('History not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('Historia Clínica no encontrada', HttpStatus.NOT_FOUND);
     }
 
     const id_control = `${patientId < 10 ? `0${patientId}` : patientId}${medicId < 10 ? `0${medicId}` : medicId}${historyId < 10 ? `0${historyId}` : historyId}`;
@@ -79,7 +79,7 @@ export class ControlService {
     });
 
     if (total === 0) {
-      throw new HttpException('El paciente no tiene registrados controles actualmente', HttpStatus.NOT_FOUND);
+      throw new HttpException('El paciente no tiene registrados controles actualmente', HttpStatus.ACCEPTED);
     }
 
     return {
@@ -147,7 +147,7 @@ export class ControlService {
     });
 
     if (controls.length === 0) {
-      throw new HttpException('El paciente no tiene registrados controles actualmente', HttpStatus.NOT_FOUND);
+      throw new HttpException('El paciente no tiene registrados controles actualmente', HttpStatus.ACCEPTED);
     }
 
     const historiesFounded = this.historyRepository.find({
@@ -164,5 +164,19 @@ export class ControlService {
       date: history.created_at,
     }));
 
+  }
+
+
+  //? Servicio para verificar si una historia clínica tiene un control asociado
+  async checkControlByHistoryId(historyId: number) {
+    const control = await this.controlRepository.findOne({
+      where: {history: {id_medic_history: historyId}}
+    });
+
+    if (!control) {
+      return false;
+    }
+
+    return true;
   }
 }
