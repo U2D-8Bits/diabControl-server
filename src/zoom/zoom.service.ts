@@ -1,7 +1,8 @@
-/* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+// src/zoom/zoom.service.ts
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class ZoomService {
@@ -19,19 +20,27 @@ export class ZoomService {
   }
 
   private async getAccessToken(): Promise<string> {
-    const response = await this.httpService
-      .post('https://zoom.us/oauth/token', null, {
-        params: {
-          grant_type: 'account_credentials',
-          account_id: this.accountId,
-        },
-        auth: {
-          username: this.clientId,
-          password: this.clientSecret,
-        },
-      })
-      .toPromise();
-    return response.data.access_token;
+    try {
+      const response = await lastValueFrom(
+        this.httpService.post('https://zoom.us/oauth/token', null, {
+          params: {
+            grant_type: 'account_credentials',
+            account_id: this.accountId,
+          },
+          auth: {
+            username: this.clientId,
+            password: this.clientSecret,
+          },
+        }),
+      );
+      return response.data.access_token;
+    } catch (error) {
+      console.error('Error obtaining access token:', error.response.data);
+      throw new HttpException(
+        'Failed to obtain access token',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async createMeeting(
@@ -40,23 +49,33 @@ export class ZoomService {
     duration: number,
   ): Promise<any> {
     const accessToken = await this.getAccessToken();
-    const response = await this.httpService
-      .post(
-        'https://api.zoom.us/v2/users/me/meetings',
-        {
-          topic,
-          type: 2,
-          start_time,
-          duration,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
+    try {
+      const response = await lastValueFrom(
+        this.httpService.post(
+          'https://api.zoom.us/v2/users/me/meetings',
+          {
+            topic,
+            type: 2, // Scheduled meeting
+            start_time,
+            duration,
+            timezone: 'America/Mexico_City',
+            agenda: 'Teleconsulta', // Opcional, pero recomendado para evitar problemas de zona horaria
           },
-        },
-      )
-      .toPromise();
-
-    return response.data;
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        ),
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error creating meeting:', error.response.data);
+      throw new HttpException(
+        'Failed to create meeting',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
