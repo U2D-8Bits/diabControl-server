@@ -76,6 +76,7 @@ export class ControlService {
       where: {paciente: { id_user: patientId} },
       take: limit,
       skip: (page - 1) * limit,
+      relations: ['history']
     });
 
     if (total === 0) {
