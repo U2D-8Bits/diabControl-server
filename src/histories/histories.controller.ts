@@ -46,6 +46,12 @@ export class HistoriesController {
     return this.historiesService.findOne(id);
   }
 
+  //? Controlador para obtener los signos vitales de las historias clinicas de un paciente por su id
+  @Get(':id/signals')
+  getSignalByPacienteId(@Param('id') id: number) {
+    return this.historiesService.getSignalByPacienteId(id);
+  }
+
   @Patch(':id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() updateHistoryDto: UpdateHistoryDto) {
     return this.historiesService.update(id, updateHistoryDto);
