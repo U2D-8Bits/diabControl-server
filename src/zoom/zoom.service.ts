@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class ZoomService {
