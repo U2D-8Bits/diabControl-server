@@ -15,6 +15,7 @@ import { MedicinesModule } from './medicines/medicines.module';
 import { MedcategoriesModule } from './medcategories/medcategories.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ControlModule } from './control/control.module';
+import { ZoomModule } from './zoom/zoom.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { ControlModule } from './control/control.module';
     MedicinesModule,
     MedcategoriesModule,
     ControlModule,
+    ZoomModule,
   ],
   controllers: [],
   providers: [],
