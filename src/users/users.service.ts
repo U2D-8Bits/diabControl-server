@@ -250,6 +250,30 @@ export class UsersService {
     };
   }
 
+    //! Método para obtener todos los usuarios con rol de paciente y con busqueda
+    async findAllPacientesWithSearch(search: string) {
+      const whereCondition = [
+        { role_id: 2, user_name: ILike(`%${search}%`) },
+        { role_id: 2, user_lastname: ILike(`%${search}%`) },
+      ];
+  
+      return this.userRepository.find({
+        where: search ? whereCondition : { role_id: 2 },
+      });
+    }
+  
+  
+    //! Método para obtener todos los usuarios con rol de médico y con busqueda
+    async findAllMedicosWithSearch(search: string) {
+      const whereCondition = [
+        { role_id: 1, user_name: ILike(`%${search}%`) },
+        { role_id: 1, user_lastname: ILike(`%${search}%`) },
+      ];
+  
+      return this.userRepository.find({
+        where: search ? whereCondition : { role_id: 2 },
+      });
+    }
 
 
 
@@ -689,6 +713,10 @@ export class UsersService {
       console.error(error);
     }
   }
+
+
+
+
 
   //! get Jason Web Token
   getJwtToken(payload: JwtPayload) {
