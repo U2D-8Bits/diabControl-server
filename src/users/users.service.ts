@@ -271,7 +271,7 @@ export class UsersService {
       ];
   
       return this.userRepository.find({
-        where: search ? whereCondition : { role_id: 2 },
+        where: search ? whereCondition : { role_id: 1 },
       });
     }
 
