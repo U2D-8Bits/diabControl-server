@@ -11,7 +11,10 @@ import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: '*', // Permite todas las solicitudes de origen
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Authorization'],
+    credentials: true
   },
 })
 @Injectable()
