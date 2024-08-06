@@ -1,31 +1,43 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable prettier/prettier */
-import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { ChatService } from './chat.service';
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
+} from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UsersService } from 'src/users/users.service';
-import { Injectable, UseGuards } from '@nestjs/common';
-import { TokenGuard } from 'src/users/guards/auth/token.guard';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
+import { UsersService } from '../users/users.service';
+import { TokenGuard } from '../users/guards/auth/token.guard';
 import { JwtService } from '@nestjs/jwt';
-
+import { JwtPayload } from 'src/users/interfaces';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // Permite todas las solicitudes de origen
+    origin: '*',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Authorization'],
-    credentials: true
+    credentials: true,
   },
 })
-@Injectable()
-@UseGuards(TokenGuard)
-export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   @WebSocketServer() server: Server;
-  
+
   constructor(
-    private readonly chatService: ChatService,
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   afterInit(server: Server) {
@@ -33,10 +45,14 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   async handleConnection(client: Socket) {
-    const token = client.handshake.query.token as string;
+    const token = Array.isArray(client.handshake.query.token)
+      ? client.handshake.query.token[0]
+      : client.handshake.query.token;
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, { secret: process.env.JWT_SEED });
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SEED,
+      });
       const user = await this.usersService.findUserByID(parseInt(payload.id));
 
       if (user && user.user_status) {
@@ -59,4 +75,12 @@ export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
   }
 
+  @UseGuards(TokenGuard)
+  @SubscribeMessage('message')
+  handleMessage(
+    @MessageBody() message: any,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    client.broadcast.emit('message', message); // Emitir mensaje a todos excepto al remitente
+  }
 }
