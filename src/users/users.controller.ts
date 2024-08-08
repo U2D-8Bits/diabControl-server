@@ -102,6 +102,20 @@ export class UsersController {
 
 
 
+  //! Ruta para listar todos los usuarios con rol paciente y busqueda
+  @UseGuards(AuthGuard)
+  @Get('pacientes/search')
+  findAllPacientesSearch(@Query('search') search: string = '') {
+    return this.userService.findAllPacientesWithSearch(search);
+  }
+
+
+  //! Ruta para listar todos los usuarios con rol médico y busqueda
+  @UseGuards(TokenGuard)
+  @Get('medicos/search')
+  findAllMedicosSearch(@Query('search') search: string = '') {
+    return this.userService.findAllMedicosWithSearch(search);
+  }
 
 
   //! Ruta para listar los usuarios de rol paciente

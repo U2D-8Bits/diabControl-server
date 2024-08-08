@@ -16,6 +16,7 @@ import { MedcategoriesModule } from './medcategories/medcategories.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ControlModule } from './control/control.module';
 import { ZoomModule } from './zoom/zoom.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ZoomModule } from './zoom/zoom.module';
     MedcategoriesModule,
     ControlModule,
     ZoomModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [],
