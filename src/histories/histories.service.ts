@@ -135,6 +135,42 @@ export class HistoriesService {
     };
   }
 
+
+  //! Servicio para obtener todas las historias clinicas de un paciente por su id y solo tener los datos de los signos vitales
+  async getSignalByPacienteId(id: number) {
+    //* Buscamos el paciente por su id
+    const userPaciente = this.userRepository.findOne({
+      where: {id_user: id}
+    })
+
+    //* Verificamos que el paciente exista
+    if (!userPaciente) {
+      throw new HttpException('El paciente no existe', HttpStatus.NOT_FOUND);
+    }
+
+    //* Buscamos los historiales por el id del paciente
+    const historiesFounded = this.historyRepository.find({
+      where: { paciente: { id_user: id } },
+      select: ['weight_patient', 'pulse_patient', 'presure_patient', 'frequency_patient', 'temperature_patient', 'created_at'],
+    })
+
+    //* Verificamos que existan historiales clinicos
+    if ((await historiesFounded).length === 0) {
+      return 'El paciente no tiene historias clinicas';
+    }
+
+    //* Retornamos las historias clinicas del paciente con solo los datos de los signos vitales (weight_patient, pulse_patient, presure_patient, frequency_patient, temperature_patient)
+    return (await historiesFounded).map(history => ({
+      weight: history.weight_patient,
+      pulse: history.pulse_patient,
+      pressure: history.presure_patient,
+      frequency: history.frequency_patient,
+      temperature: history.temperature_patient,
+      date: history.created_at,
+    }));
+
+  }
+
   //! Servicio para buscar un historial clinico por su id
   async findOne(id: number) {
     //* Buscar por ID el historial clinico

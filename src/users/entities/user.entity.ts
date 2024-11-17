@@ -1,9 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { Act } from "src/act/entities/act.entity";
+import { ChatMessage } from "src/chat/entities/chat-message.entity";
+import { ChatRoom } from "src/chat/entities/chat-room.entity";
+import { Control } from "src/control/entities/control.entity";
 import { File } from "src/file/entities/file.entity";
 import { History } from "src/histories/entities/history.entity";
 import { Role } from "src/role/entities/role.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity({name: 'tb_users'})
 export class User {
@@ -61,6 +64,12 @@ export class User {
     @Column({name: 'int_role_id', type: 'int'})
     role_id: number
 
+    @ManyToMany(() => ChatRoom, chatRoom => chatRoom.users)
+    chatRooms: ChatRoom[];
+  
+    @OneToMany(() => ChatMessage, message => message.sender)
+    sentMessages: ChatMessage[];
+
     @OneToOne( () => Act, act => act.user)
     act: Act
 
@@ -75,5 +84,11 @@ export class User {
 
     @OneToMany( ()=> History, history => history.paciente)
     historiesRecived: History[]
+
+    @OneToMany(() => Control, control => control.paciente)
+    controlsRecived: Control[];
+  
+    @OneToMany(() => Control, control => control.medico)
+    controlsCreated: Control[];
 
 }

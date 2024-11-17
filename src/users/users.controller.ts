@@ -89,15 +89,33 @@ export class UsersController {
 
 
 
-  //! Ruta para listar todos los usuarios de rol medico
+  //! Ruta para listar todos los usuarios de rol medico con paginación y búsqueda
   @UseGuards(TokenGuard)
-  @Get('medics')
-  findAllUsers(@Request() req: Request) {
-    return this.usersService.findAllMedicos();
+  @Get('medics/paginated')
+  findAllMedicsPaginated(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('search') search: string = ''
+  ) {
+    return this.userService.findAllMedicsPaginated(page, limit, search);
   }
 
 
 
+  //! Ruta para listar todos los usuarios con rol paciente y busqueda
+  @UseGuards(AuthGuard)
+  @Get('pacientes/search')
+  findAllPacientesSearch(@Query('search') search: string = '') {
+    return this.userService.findAllPacientesWithSearch(search);
+  }
+
+
+  //! Ruta para listar todos los usuarios con rol médico y busqueda
+  @UseGuards(TokenGuard)
+  @Get('medicos/search')
+  findAllMedicosSearch(@Query('search') search: string = '') {
+    return this.userService.findAllMedicosWithSearch(search);
+  }
 
 
   //! Ruta para listar los usuarios de rol paciente
