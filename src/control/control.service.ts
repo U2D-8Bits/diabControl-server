@@ -32,6 +32,7 @@ export class ControlService {
       where: {id_user: patientId}
     });
 
+
     if (!patient) {
       throw new HttpException('Paciente no encontrado', HttpStatus.NOT_FOUND);
     }
